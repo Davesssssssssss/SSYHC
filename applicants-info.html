@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicants Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+        }
+
+        .set-schedule-btn {
+            background-color: #ff9800;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .applicant-card {
+            background-color: #fffaf0; /* Light orange background */
+            border: 1px solid #ffe0b2; /* Lighter orange border */
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .applicant-avatar {
+            width: 60px;
+            height: 60px;
+            background-color: #ffcc80; /* Orange circle for avatar */
+            border-radius: 50%;
+            margin-right: 20px;
+            border: 2px solid #ff9800;
+            display: flex; /* For centering initials/image */
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .applicant-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .score-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ffb74d; /* Orange badge color */
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 50%; /* Make it circular */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            background-color: #fffaf0; /* Light orange background */
+            border: 1px solid #ffe0b2; /* Lighter orange border */
+            border-radius: 8px;
+        }
+
+        .detail-box {
+            background-color: #fffaf0;
+            border: 1px solid #ffcc80;
+            border-radius: 5px;
+            padding: 15px; /* Adjust padding for visual similarity */
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            min-height: 80px; /* Ensure boxes have some height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            word-wrap: break-word; /* Allow long text to wrap */
+        }
+        .detail-box strong {
+            color: #333;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        .detail-box span {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .applicant-cards-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>APPLICANTS INFORMATION</h1>
+            <button class="set-schedule-btn">SET SCHEDULE</button>
+        </div>
+
+        <div id="applicantCardsContainer" class="applicant-cards-container">
+            <!-- Applicant cards will be injected here by JavaScript -->
+        </div>
+
+        <div id="applicantDetailsGrid" class="details-grid">
+            <!-- Detail boxes for the *first* applicant will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to get initials from a full name
+        function getInitials(name) {
+            if (!name) return '';
+            const parts = name.split(' ').filter(part => part.length > 0);
+            if (parts.length === 0) return '';
+            if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+            return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+        }
+
+        // Function to render applicant card
+        function renderApplicantCard(applicant, index) {
+            const card = document.createElement('div');
+            card.className = 'applicant-card';
+            card.dataset.applicantIndex = index; // Store index for later use
+
+            const avatar = document.createElement('div');
+            avatar.className = 'applicant-avatar';
+            avatar.textContent = getInitials(applicant.firstname || applicant.applicantName); // Use CRG_INFO fullName or applicantName
+            card.appendChild(avatar);
+
+            const name = document.createElement('div');
+            name.className = 'applicant-name';
+            name.textContent = applicant.fullName || applicant.applicantName || 'N/A';
+            card.appendChild(name);
+
+            const scoreBadge = document.createElement('div');
+            scoreBadge.className = 'score-badge';
+            scoreBadge.textContent = applicant.score || 'N/A'; // Assuming a 'score' field
+            card.appendChild(scoreBadge);
+
+            // Add a click listener to switch displayed details
+            card.addEventListener('click', () => {
+                const allCards = document.querySelectorAll('.applicant-card');
+                allCards.forEach(c => c.style.backgroundColor = '#fffaf0'); // Reset background
+                card.style.backgroundColor = '#ffe0b2'; // Highlight clicked card
+                renderApplicantDetails(applicant); // Render details of the clicked applicant
+            });
+
+            return card;
+        }
+
+        // Function to render applicant details grid
+        function renderApplicantDetails(applicant) {
+            const detailsGrid = document.getElementById('applicantDetailsGrid');
+            detailsGrid.innerHTML = ''; // Clear previous details
+
+            // Define the fields you want to display from CRG_INFO or applicant_info
+            // Prioritize CRG_INFO fields if they exist, otherwise use applicant_info
+            const fieldsToDisplay = [
+                { label: 'Zipcode', key: 'zipcode' },
+                { label: 'Email', key: 'email' },
+                { label: 'Phone', key: 'phone' },
+                { label: 'Address', key: 'address' },
+                { label: 'Work Expercience', key: 'expercience' },
+                { label: 'Valid-ID', key: 'validIdStatus' },
+                 { label: 'Xray', key: 'Xraystatus' }, // Example CRG_INFO field
+                  { label: 'FingerPrint', key: 'FingerPrintstatus' },
+                // Add more fields as needed, e.g., 'resume', 'skills', etc.
+            ];
+
+            fieldsToDisplay.forEach(field => {
+    const detailBox = document.createElement('div');
+    detailBox.className = 'detail-box';
+    
+    // Check if field.label is "Valid-ID"
+    const value = applicant[field.key] !== undefined ? applicant[field.key] : 'N/A';
+    
+    // Handle the special case for "Valid-ID"
+    // if (field.label === 'Valid-ID') {
+    //     detailBox.innerHTML = `<strong>${field.label}:</strong> <span style="color: green;">${value}</span>`; // Example of styling the value differently
+    // } else {
+    //     detailBox.innerHTML = `<strong>${field.label}:</strong> <span>${value}</span>`;
+    // }
+       if (field.label === 'Valid-ID') {
+        // Create an image element
+        const img = document.createElement('img');
+        img.src = value; // Replace with your image path or URL
+        img.alt = 'Valid ID Image'; // Alt text for the image
+        img.style.width = '50px'; // Example styling, adjust as needed
+        img.style.height = '50px'; // Example styling, adjust as needed
+        
+        // Append the image inside the detailBox
+        detailBox.innerHTML = `<strong>${field.label}:</strong> `;
+        detailBox.appendChild(img); // Add the image to the detailBox
+    }else  if (field.label === 'Xray') {
+        // Create an image element
+        const img = document.createElement('img');
+        img.src = value; // Replace with your image path or URL
+        img.alt = 'Valid ID Image'; // Alt text for the image
+        img.style.width = '50px'; // Example styling, adjust as needed
+        img.style.height = '50px'; // Example styling, adjust as needed
+        
+        // Append the image inside the detailBox
+        detailBox.innerHTML = `<strong>${field.label}:</strong> `;
+        detailBox.appendChild(img); // Add the image to the detailBox
+    }else  if (field.label === 'FingerPrint') {
+        // Create an image element
+        const img = document.createElement('img');
+        img.src = value; // Replace with your image path or URL
+        img.alt = 'Valid ID Image'; // Alt text for the image
+        img.style.width = '50px'; // Example styling, adjust as needed
+        img.style.height = '50px'; // Example styling, adjust as needed
+        
+        // Append the image inside the detailBox
+        detailBox.innerHTML = `<strong>${field.label}:</strong> `;
+        detailBox.appendChild(img); // Add the image to the detailBox
+    } else {
+        detailBox.innerHTML = `<strong>${field.label}:</strong> <span>${value}</span>`;
+    }
+    
+    detailsGrid.appendChild(detailBox);
+});
+
+        }
+
+        // Listen for messages from the parent (Wix) page
+        window.onmessage = (event) => {
+            if (event.data.action === "displayApplicants") {
+                const applicants = event.data.data;
+                const applicantCardsContainer = document.getElementById('applicantCardsContainer');
+                applicantCardsContainer.innerHTML = ''; // Clear existing cards
+
+                if (applicants && applicants.length > 0) {
+                    applicants.forEach((applicant, index) => {
+                        const card = renderApplicantCard(applicant, index);
+                        applicantCardsContainer.appendChild(card);
+                    });
+                    // Display details for the first applicant by default
+                    renderApplicantDetails(applicants[0]);
+                    // Highlight the first card
+                    if (applicantCardsContainer.firstElementChild) {
+                        applicantCardsContainer.firstElementChild.style.backgroundColor = '#ffe0b2';
+                    }
+                } else {
+                    applicantCardsContainer.innerHTML = '<p>No applicants found.</p>';
+                    document.getElementById('applicantDetailsGrid').innerHTML = ''; // Clear details grid
+                }
+            }
+        };
+
+        // This is important for Wix iframes to communicate properly
+        if (window.Wix) {
+            window.Wix.Events.ready();
+        }
+    </script>
+</body>
+</html>

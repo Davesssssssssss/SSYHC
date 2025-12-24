@@ -1,0 +1,2924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Role Selection Tabs</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fffdf9;
+      cursor: pointer;
+    }
+
+    /* Pure line style tabs */
+    .nav-tabs {
+      border-bottom: 2px solid #ddd;
+    }
+    .nav-tabs .nav-link {
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: #555;
+      font-weight: bold;
+      margin-right: 15px;
+      padding: 10px 15px;
+    }
+    .nav-tabs .nav-link:hover {
+      color: #ffb400;
+      border-bottom-color: #ffb40033;
+    }
+    .nav-tabs .nav-link.active {
+      color: #ffb400;
+      border-bottom: 3px solid #ffb400;
+      background: transparent;
+    }
+
+    /* Card styling */
+    .role-card {
+      background: #fef8e7;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      padding: 20px;
+    }
+    .role-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .role-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #ffb400;
+    }
+    .role-desc {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .arrow-btn {
+      background: #ffb400;
+      color: white;
+      border-radius: 50%;
+      padding: 8px 12px;
+      font-weight: bold;
+      display: inline-block;
+      transition: background 0.3s ease;
+    }
+    .arrow-btn:hover {
+      background: #ff9500;
+    }
+
+
+    #per-info .btn-submit {
+  background-color: #ffb400;
+  color: white;
+  font-weight: bold;
+  padding: 10px 30px;
+  border-radius: 30px;
+  transition: 0.3s ease;
+  border: none;
+}
+
+#per-info .btn-submit:hover {
+  background-color: #ffa000;
+}
+ .form-control, .form-select {
+      border-radius: 20px;
+      border: 1px solid green;
+    }
+
+    .form-label {
+      font-weight: bold;
+    }
+
+    .btn-submit {
+      background-color: #92f8b0;
+      color: #000;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 25px;
+    }
+
+        button:hover {
+      background-color: #004039;
+      box-shadow: 0 4px 10px rgb(0 55 50 / 0.45);
+    }
+    button:active {
+      background-color: #00332e;
+    }
+    /* Container for input + icon to position relative */
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+     .container-zipcode {
+      max-width: 400px;
+      width: 100%;
+      background: #ffffffdd;
+      padding: 2.5rem 2rem 3rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0px 8px 20px rgb(0 0 0 / 0.1);
+      text-align: center;
+    }
+    .form-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #202020;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    .zip {
+      background: #fbfbf9;
+      border: 1.3px solid #d6d4cc;
+      border-radius: 10px;
+      padding: 12px 16px 12px 44px;
+      font-size: 1rem;
+      color: #3a3a3a;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    .zip:focus {
+      outline: none;
+      border-color: #005347;
+      background: #f0f5f4;
+    }
+    .icon-location {
+      position: relative;
+      top: 0;
+      left: 14px;
+      width: 16px;
+      height: 16px;
+      stroke: #777;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      pointer-events: none;
+      user-select: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    /* button {
+      margin-top: 1.4rem;
+      background-color: #005347;
+      color: #eaf3e9;
+      border: none;
+      padding: 0.8rem 0;
+      width: 100%;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+      user-select: none;
+      box-shadow: 0 2px 8px rgb(0 83 71 / 0.3);
+    } */
+    button:hover {
+      background-color: #004039;
+      box-shadow: 0 4px 10px rgb(0 55 50 / 0.45);
+    }
+    button:active {
+      background-color: #00332e;
+    }
+    /* Container for input + icon to position relative */
+    /* .input-wrapper {
+      position: relative;
+      width: 100%;
+      margin: 0 auto;
+    } */
+
+    /* when do you need care */
+      .container-when {
+    text-align: center;
+  }
+  .title-when {
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+  .option {
+    display: block;
+    width: 320px;
+    margin: 8px auto;
+    padding: 12px 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .option:hover {
+    border-color: black;
+  }
+
+  /* WHAT KIND OF CARE */
+  .container-what {
+    max-width: 380px;
+    width: 100%;
+  }
+  .text-WHAT {
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #000000;
+  }
+  .option-list-WHAT {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .option-WHAT {
+    border: 1px solid #d0cec9;
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    background-color: transparent;
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+  .option-WHAT:hover {
+    border-color: #034d43;
+    background-color: #f0fff9;
+  }
+  .option-title-WHAT{
+    font-weight: 600;
+    font-size: 14px;
+    color: #000000;
+    margin-bottom: 4px;
+  }
+  .option-desc-WHAT {
+    font-weight: 300;
+    font-size: 10px;
+    color: #6f6f6f;
+  }
+  /* END WHAT KIND OF CARE */
+  /* WHO NEED  CARE */
+  .container-WHO {
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .text-WHO {
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    label.child-label {
+      font-weight: 600;
+      font-size: 14px;
+      display: block;
+      margin: 10px 0 6px 0;
+      text-align: left;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .add-child {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #004d40;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    .add-child span.plus {
+      background-color: #004d40;
+      color: #fff;
+      border-radius: 50%;
+      height: 18px;
+      width: 18px;
+      line-height: 18px;
+      margin-right: 6px;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 14px;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .checkbox-container input[type="checkbox"] {
+      margin-right: 8px;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    button.next-btn {
+      background-color: #004d40;
+      color: #eaf3d2;
+      border: none;
+      padding: 12px 0;
+      width: 100%;
+      font-weight: 700;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button.next-btn:hover {
+      background-color: #00332b;
+    }
+
+  /* END HERE */
+  /* Do you need any other types of care? */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .checkbox-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 18px;
+    border: 1px solid #c1c3c8;
+    border-radius: 12px;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .checkbox-container:hover {
+    border-color: #125432;
+    background-color: #f0f7f5;
+  }
+   .checkbox-container input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 1.6px solid #c1c3c8;
+    border-radius: 4px;
+    margin: 0;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    flex-shrink: 0;
+    background-color: white;
+  }
+  .checkbox-container input[type="checkbox"]:checked {
+    background-color: #125432;
+    border-color: #125432;
+  }
+  .checkbox-container input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 7px;
+    width: 4px;
+    height: 10px;
+    border: solid #f0f7f5;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+  }
+  .checkbox-label-text {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #292929;
+  }
+   .skip-link {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+  .skip-link a {
+    color: #454547;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .skip-link a:hover {
+    color: #125432;
+  }
+  /* END HERE Do you need any other types of care? */
+  /* what  your  email address */
+   .container-eaddress{
+    max-width: 400px;
+    width: 90%;
+  }
+  .notification {
+    background-color: #d7f2ac;
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: #2b461e;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 36px;
+  }
+  .notification svg {
+    stroke: #2b461e;
+    stroke-width: 2;
+  }
+  .title-eaddress {
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    font-size: 19px;
+    color: #222222;
+  }
+  .para-eaddress {
+    margin: 0 0 20px 0;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #2d3a45;
+  }
+  #emailInput {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #9a9999;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #222;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    cursor: pointer;
+  }
+  #emailInput:focus {
+    border-color: #00583d;
+  }
+  #nextBtn {
+    margin-top: 30px;
+    width: 100%;
+    background-color: #00583d;
+    border: none;
+    border-radius: 25px;
+    padding: 14px 0;
+    color: #e6f1d7;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  #nextBtn:active {
+    background-color: #044730;
+  }
+  /* end here */
+/* personal information */
+ .form-container {
+    max-width: 360px;
+    width: 100%;
+  }
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    cursor: pointer;
+  }
+  /* Heading */
+  .heading {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 18px;
+  }
+  /* Form styles */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: #555;
+  }
+  input[type="text"] {
+    background: white;
+    border: 1px solid #aaa;
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    margin-bottom: 18px;
+    transition: border-color 0.25s ease;
+    outline-offset: 2px;
+  }
+  input[type="text"]:focus {
+    border-color: #025949;
+    outline: none;
+  }
+  /* Terms text */
+  .terms {
+    color: #444;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .terms a {
+    color: #025949;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .terms a:hover,
+  .terms a:focus {
+    color: #014034;
+  }
+    button {
+    background-color: #025949;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 25px;
+    padding: 12px 0;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    transition: background-color 0.25s ease;
+    user-select: none;
+  }
+  button:hover,
+  button:focus {
+    background-color: #014034;
+    outline: none;
+  }
+/* end personal information */
+
+/* Finish setting up your account add client password  */
+.container-clientPASS {
+      width: 100%;
+      max-width: 360px;
+      text-align: left;
+    }
+    /* Success message container */
+    .success-message {
+      background-color: #d0f0c0; /* light green */
+      color: #2f6627;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+      box-shadow: 0 1px 3px rgba(24, 112, 3, 0.2);
+    }
+    .success-message svg {
+      width: 18px;
+      height: 18px;
+      stroke: #2f6627;
+    }
+      h2 {
+      font-weight: 600;
+      font-size: 1.125rem;
+      margin: 0 0 16px 0;
+      color: #0c0c0c;
+    }
+    /* Form and password input styles */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    input[type="password"], input[type="text"] {
+      width: 100%;
+      font-size: 0.9rem;
+      padding: 12px 44px 12px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      outline-offset: 2px;
+      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      color: #0b0b0b;
+      user-select: text;
+    }
+
+    input[type="password"].error, input[type="text"].error {
+      border-color: #e45b52;
+    }
+    input[type="password"]:focus, input[type="text"]:focus {
+      border-color: #10735e;
+      box-shadow: 0 0 0 3px rgb(16 115 94 / 0.2);
+    }
+    /* Show/Hide password button */
+    .toggle-password-btn {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8e8e93;
+      transition: color 0.2s ease-in-out;
+    }
+    .toggle-password-btn:hover,
+    .toggle-password-btn:focus {
+      color: #10735e;
+      outline: none;
+    }
+    .toggle-password-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2.2;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+       .error-message {
+      color: #e45b52;
+      font-size: 0.75rem;
+      margin-top: 2px;
+      font-weight: 500;
+      font-style: normal;
+      user-select: none;
+      min-height: 18px;
+    }
+    /* Submit button */
+    button[type="submit"] {
+      margin-top: 12px;
+      background-color: #005849;
+      color: #f6f5ef;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.25s ease-in-out;
+      letter-spacing: 0.05em;
+    }
+    button[type="submit"]:hover,
+    button[type="submit"]:focus {
+      background-color: #00805e;
+      outline: none;
+    }
+/* end Finish setting up your account add client password  */
+
+/*  What type of care are you interested in?*/
+.container-typeCare {
+      max-width: 400px;
+      width: 100%;
+      text-align: left;
+    }
+    .card-image {
+      position: relative;
+      width: 100%;
+      padding-top: 66.66%; /* 3:2 aspect ratio */
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgb(0 0 0 / 0.12);
+      margin-bottom: 24px;
+    }
+    .card-image img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 14px;
+    }
+        .card-text-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      color: white;
+      font-weight: 600;
+      font-size: 1.25rem;
+      padding: 16px 20px 20px 20px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%);
+      width: 100%;
+      border-radius: 0 0 14px 14px;
+      user-select: none;
+    }
+    label {
+      font-size: 1rem;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .option-button {
+      background-color: white;
+      border: 1px solid #c6c6c8;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 0.935rem;
+      font-weight: 400;
+      color: #1d1d1f;
+      margin-bottom: 14px;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      text-align: left;
+      user-select: none;
+      box-shadow: inset 0 0 0 0 transparent;
+    }
+        .option-button:hover {
+      background-color: #fafafa;
+      border-color: #8e8e93;
+    }
+    .option-button:focus-visible {
+      outline: 3px solid #007aff;
+      outline-offset: 2px;
+      border-color: #007aff;
+    }
+    .option-button.selected {
+      background-color: #007aff;
+      color: white;
+      border-color: #007aff;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
+    }
+/* end What type of care are you interested in? */
+
+/* What kind of help are you looking for? */
+  .container-kindOfhelp{
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.3;
+      font-size: 18px;
+      color: #111;
+    }
+    .option {
+      background: #fff;
+      border: 1px solid #bbb;
+      border-radius: 12px;
+      padding: 15px 15px 15px 20px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .option:hover {
+      border-color: #0a5f52;
+      box-shadow: 0 3px 10px rgba(10,95,82,0.2);
+    }
+    .option.selected {
+      border-color: #0a5f52;
+      box-shadow: 0 0 0 3px #0a5f52aa;
+      background-color: #e7f2f0;
+    }
+    .option-text {
+      user-select: none;
+      flex-grow: 1;
+    }
+    .option-title {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 3px;
+      color: #111;
+    }
+     .option-desc {
+      font-weight: 300;
+      font-size: 11px;
+      color: #777;
+      line-height: 1.3;
+      user-select: none;
+    }
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #0a5f52;
+      flex-shrink: 0;
+    }
+    .btn-kindOfhelp {
+      margin-top: 25px;
+      width: 100%;
+      background-color: #0a5f52;
+      color: #e9f9e9;
+      padding: 13px 0;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .btn-kindOfhelp:disabled {
+      background-color: #7a9b93;
+      cursor: not-allowed;
+    }
+/* end What kind of help are you looking for? */
+/* pet care */
+ .petcare__container {
+      background: #ffffffdd;
+      border-radius: 20px;
+      box-shadow:
+        6px 6px 12px #bec6b6,
+        -6px -6px 12px #fefefe;
+      max-width: 420px;
+      width: 100%;
+      padding: 2.5rem 3rem 3rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+    .petcare__header {
+      text-align: center;
+      color: #2e4b3b;
+      font-weight: 600;
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      text-shadow: 0 1px 2px #bdd5b1cc;
+      user-select: none;
+    }
+    .petcare__subheader {
+      font-weight: 500;
+      font-size: 1.05rem;
+      color: #3b5542;
+      margin-bottom: 0.75rem;
+      user-select: none;
+    }
+    .petcare__form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.75rem 2.5rem;
+    }
+    /* Adjust grid for the single "Other" select */
+    .petcare__form .petcare__other {
+      grid-column: 1 / -1;
+      justify-self: start;
+      width: 140px;
+    }
+    .petcare__label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #4a5b41;
+      margin-bottom: 0.35rem;
+      user-select: none;
+      display: block;
+    }
+    .petcare__select {
+      width: 100%;
+      background: #f6fdfa;
+      border: 1.8px solid #a1b59d;
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #2b4233;
+      cursor: pointer;
+      outline-offset: 3px;
+      transition:
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        background-color 0.3s ease;
+      box-shadow:
+        inset 2px 2px 4px #d2e4cf,
+        inset -2px -2px 6px #f9fef6;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #2e4b3b 50%),
+        linear-gradient(135deg, #2e4b3b 50%, transparent 50%);
+      background-position:
+        calc(100% - 20px) calc(1em + 3px),
+        calc(100% - 15px) calc(1em + 3px);
+      background-size: 6px 6px;
+      background-repeat: no-repeat;
+    }
+    .petcare__select:hover {
+      border-color: #567b52;
+      box-shadow:
+        0 0 8px #8dbc93cc inset,
+        inset 2px 2px 4px #c4dcbe,
+        inset -2px -2px 6px #f0faed;
+      background-color: #e9f5e4;
+    }
+    .petcare__select:focus {
+      border-color: #3d6342;
+      box-shadow:
+        0 0 15px #3d634299,
+        inset 2px 2px 6px #abc288,
+        inset -2px -2px 8px #e0f3ca;
+      background-color: #d8ecc7;
+    }
+    .petcare__nextbtn {
+      margin-top: 2.5rem;
+      padding: 0.9rem 0;
+      border: none;
+      border-radius: 45px;
+      background: linear-gradient(90deg, #255a44, #3a825b);
+      color: #f0f9f4;
+      font-size: 1.15rem;
+      font-weight: 600;
+      box-shadow:
+        0 6px 10px #255a4455,
+        inset 0 -3px 8px #2a6b5077;
+      cursor: pointer;
+      transition:
+        background 0.4s ease,
+        transform 0.15s ease,
+        box-shadow 0.25s ease;
+      user-select: none;
+    }
+    .petcare__nextbtn:hover {
+      background: linear-gradient(90deg, #336b54, #4f9f77);
+      box-shadow:
+        0 8px 15px #367355aa,
+        inset 0 -4px 10px #3c805477;
+      transform: translateY(-2px);
+    }
+    .petcare__nextbtn:active {
+      transform: translateY(1px);
+      box-shadow:
+        0 3px 6px #255a4433,
+        inset 0 -2px 6px #2a6b5055;
+    }
+
+      .uniqueForm_container {
+      background: #ffffffdd;
+      border-radius: 18px;
+      padding: 36px 44px;
+      box-shadow: 0 6px 14px rgba(29, 46, 38, 0.15);
+      max-width: 380px;
+      width: 90vw;
+      text-align: center;
+      user-select: none;
+      transition: box-shadow 0.3s ease;
+    }
+    .uniqueForm_container:hover {
+      box-shadow: 0 10px 24px rgba(29, 46, 38, 0.3);
+    }
+    /* Headings */
+    .uniqueForm_title {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 6px;
+      color: #123b2e;
+      letter-spacing: 0.04em;
+    }
+    .uniqueForm_subtitle {
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #3d533d;
+      margin: 16px 0 20px 0;
+    }
+    /* List container */
+    .uniqueForm_radioGroup {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 36px;
+      text-align: left;
+    }
+    /* Each radio option row */
+    .uniqueForm_radioOption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      padding: 8px 14px 10px 14px;
+      border-radius: 12px;
+      transition: background-color 0.25s ease;
+      user-select: none;
+    }
+    .uniqueForm_radioOption:hover {
+      background-color: #e5f1e7;
+    }
+    /* Radio label text */
+    .uniqueForm_labelText {
+      font-weight: 400;
+      font-size: 0.9rem;
+      color: #2d3e2d;
+      line-height: 1.4;
+      max-width: 75%;
+    }
+    /* Custom styled radio input */
+    .uniqueForm_radioInput {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border: 2.8px solid #3a6b55;
+      border-radius: 50%;
+      outline-offset: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      background-color: #f7f5ef;
+    }
+    .uniqueForm_radioInput:hover:not(:checked) {
+      border-color: #529a63;
+    }
+    .uniqueForm_radioInput:focus-visible {
+      outline: 3px solid #8ec895;
+      outline-offset: 4px;
+    }
+    /* Inner filled circle when checked */
+    .uniqueForm_radioInput:checked {
+      border-color: #145c3c;
+      background-color: #145c3c;
+    }
+    .uniqueForm_radioInput:checked::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 11px;
+      height: 11px;
+      background-color: #e4e9dc;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    /* Next button */
+    .uniqueForm_nextButton {
+      display: block;
+      width: 100%;
+      padding: 14px 0;
+      background-color: #145c3c;
+      color: #f3f9e8;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 12px #144d33aa;
+      letter-spacing: 0.04em;
+      user-select: none;
+    }
+    .uniqueForm_nextButton:hover:not(:disabled) {
+      background-color: #0f442f;
+      box-shadow: 0 6px 18px #103e2ba8;
+    }
+    .uniqueForm_nextButton:disabled {
+      background-color: #a1b39f;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+/* end pet care */
+
+/* housekeeping */
+.cleaning-ui-container {
+    width: 320px;
+  }
+  .cleaning-ui-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+  .cleaning-ui-option {
+    border: 1.5px solid #777;
+    border-radius: 12px;
+    padding: 13px 18px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    background-color: #fff;
+  }
+  .cleaning-ui-option.selected {
+    border-color: #004d40;
+    background-color: #dcedc8;
+  }
+  .cleaning-ui-option-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    user-select: none;
+  }
+  .cleaning-ui-option-desc {
+    font-weight: 300;
+    font-size: 0.75rem;
+    color: #555;
+    user-select: none;
+    line-height: 1.25;
+  }
+  .cleaning-ui-button {
+    display: block;
+    width: 100%;
+    background-color: #004d40;
+    color: #e6f0d4;
+    font-weight: 600;
+    padding: 13px 0;
+    border: none;
+    border-radius: 26px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  .cleaning-ui-button:hover:not(:disabled) {
+    background-color: #00332d;
+  }
+  .cleaning-ui-button:disabled {
+    background-color: #a9cbb7;
+    cursor: not-allowed;
+  }
+  /* sizeneedcleaning */
+   .ca-select-wrapper {
+      width: 320px;
+    }
+    .ca-select-question {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+    .ca-select-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.8rem;
+    }
+    .ca-select-option {
+      background-color: #fff;
+      border: 1.5px solid #d1cfc9;
+      border-radius: 12px;
+      padding: 0.9rem 1.2rem;
+      cursor: pointer;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .ca-select-option:hover:not(.ca-select-option--selected) {
+      border-color: #508073;
+      box-shadow: 0 0 5px rgba(80,128,115,0.35);
+    }
+    .ca-select-option--selected {
+      border-color: #00473e;
+      outline: 2px solid #00473e;
+      background-color: #edf7f4;
+    }
+    .ca-select-option-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 0.25rem;
+      color: #121212;
+    }
+    .ca-select-option-desc {
+      font-weight: 400;
+      font-size: 11px;
+      color: #7a7a7a;
+      line-height: 1.3;
+    }
+    .ca-select-next-btn {
+      width: 100%;
+      padding: 0.7rem 0;
+      background-color: #00473e;
+      border-radius: 28px;
+      border: none;
+      color: #e6fce5;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+    .ca-select-next-btn:hover {
+      background-color: #006652;
+    }
+    .ca-select-next-btn:disabled {
+      background-color: #96a99b;
+      cursor: not-allowed;
+      color: #d9e5d7;
+    }
+    /* Hide native radio but keep accessibility */
+    .ca-select-radio {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      height: 0;
+    }
+  /* end sizeneedcleaning */
+  /* house-manybedrooms */
+   .ui-container {
+      width: 280px;
+      background: inherit;
+    }
+    .ui-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 24px;
+      color: #1a1a1a;
+    }
+    .ui-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #bdb8a5;
+      padding: 8px 0 12px 0;
+      font-weight: 500;
+      color: #093f36;
+      font-size: 13px;
+    }
+    .ui-label {
+      flex: 1;
+    }
+    .ui-controls {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      user-select: none;
+    }
+    .ui-button {
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background-color: #064c44;
+      color: #f6f4ed;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.25s ease;
+      flex-shrink: 0;
+    }
+    .ui-button:hover {
+      background-color: #056050;
+    }
+    .ui-button:active {
+      background-color: #043a32;
+    }
+    .ui-count {
+      font-weight: 700;
+      font-size: 16px;
+      min-width: 20px;
+      text-align: center;
+      color: #222222;
+      user-select: none;
+    }
+    .ui-btn-next {
+      margin-top: 36px;
+      width: 100%;
+      padding: 10px 0;
+      border-radius: 24px;
+      border: none;
+      background-color: #064c44;
+      color: #f6f4ed;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .ui-btn-next:hover {
+      background-color: #056050;
+    }
+    .ui-btn-next:active {
+      background-color: #043a32;
+    }
+  /* end house-manybedrooms */
+/* end housekeeping */
+
+  </style>
+</head>
+<body>
+
+<div class="container mt-4">
+  <!-- Line-style tabs -->
+  <ul class="nav nav-tabs d-none" id="roleTabs" role="tablist" >
+     <li class="nav-item" role="presentation">
+      <button class="nav-link  active" id="house-tab" data-bs-toggle="tab" data-bs-target="#house" type="button" role="tab">Job role</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="care-tab" data-bs-toggle="tab" data-bs-target="#care" type="button" role="tab">Care Services</button>
+    </li>
+   
+       <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#per-info" type="button" role="tab">Personal-Information</button>
+    </li>
+       <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab">Schedule</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#childCarezipcode" type="button" role="tab">Schedule</button>
+    </li>
+       <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#when" type="button" role="tab">Schedule</button>
+    </li>
+        <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#WHAT" type="button" role="tab">Schedule</button>
+    </li>
+     <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#WHO" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#DO" type="button" role="tab">Schedule</button>
+    </li>
+     <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#eaddress" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#Almost" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#psk" type="button" role="tab">Schedule</button>
+    </li>
+        <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#typeCare" type="button" role="tab">Schedule</button>
+    </li>
+     <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#kindOfhelp" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#kindOfhelps" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#pet-when" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#pet-tell" type="button" role="tab">Schedule</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#pet-typeOfservice" type="button" role="tab">Schedule</button>
+    </li>
+     <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#petcarezipcode" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#house-typeOfcleaning" type="button" role="tab">Schedule</button>
+    </li>
+     <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#house-sizeneedcleaning" type="button" role="tab">Schedule</button>
+    </li>
+      <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#house-manybedrooms" type="button" role="tab">Schedule</button>
+    </li>
+     <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#housekeepingzipcode" type="button" role="tab">Schedule</button>
+    </li>
+  </ul>
+
+  <div class="tab-content mt-4">
+    <!-- Care Services Tab -->
+    <div class="tab-pane fade " id="care" role="tabpanel">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="role-card text-center" onclick="switchTab('#typeCare','Senior Caregiver')">
+            <img src="https://static.wixstatic.com/media/e72759_e58bbaaa1ecc4970b4f9d765085899b8~mv2.png" width="80">
+            <div class="role-title">Senior Caregiver</div>
+            <div class="role-desc">Compassionate support for elderly loved ones</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#childCarezipcode','Child Caregiver')">
+            <img src="https://static.wixstatic.com/media/e72759_c12f1fa312384879b08a5173b75a272b~mv2.png" width="80">
+            <div class="role-title">Child Caregiver</div>
+            <div class="role-desc">Safe and nurturing assistance for children</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#pet-when','Pet Caregiver')">
+            <img src="https://static.wixstatic.com/media/e72759_4a24e1cd9acd4296aad8155f568949c2~mv2.png" width="80">
+            <div class="role-title">Pet Caregiver</div>
+            <div class="role-desc">Loving care for your furry companions</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+         <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#house-typeOfcleaning','Housekeeping')">
+            <img src="https://static.wixstatic.com/media/e72759_c0e1abae72e5438184169dccf9d2c804~mv2.png" width="80">
+            <div class="role-title">Housekeeping</div>
+            <div class="role-desc">Reliable household cleaning and maintenance</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+
+           <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#childCarezipcode','Tutoring')">
+            <img src="https://static.wixstatic.com/media/e72759_e625530ce7134f799f8e44d4f3924a58~mv2.png" width="80">
+            <div class="role-title">Tutoring</div>
+            <div class="role-desc">Personalized help for students of all ages</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Household Services Tab -->
+ <div class="tab-pane fade show active" id="house" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+        <h2 class="content-title text-center">Let's get started. Choose an option:</h2>
+        <div class="col-md-4">
+          <div class="role-card text-center" onclick="goToCareservices('#care')">
+            <img src="https://static.wixstatic.com/media/7339e9_5348461ce5fb4ce8989deffb95c3c50a~mv2.png" width="80">
+            <div class="role-title"> I need a Caregiver</div>
+            <div class="role-desc"></div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="role-card text-center" onclick="clientBtn('#per-info')">
+            <img src="https://static.wixstatic.com/media/e72759_e58bbaaa1ecc4970b4f9d765085899b8~mv2.png" width="80">
+            <div class="role-title">I need a Carejobs</div>
+            <div class="role-desc"></div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- zipcodes -->
+     <div class="tab-pane fade " id="childCarezipcode" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+        <h2 class="content-title text-center">Where do you need care ?</h2>
+        <main class="container-zipcode" role="main" aria-labelledby="form-title">
+   
+    <div class="input-wrapper">
+      <svg class="icon-location" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 21s-6-5.686-6-10.632a6 6 0 0 1 12 0C18 15.314 12 21 12 21z"></path>
+        <circle cx="12" cy="10" r="2.5"></circle>
+      </svg>
+      <input type="text" class="zip" id="childzipcode" name="zip" placeholder="ZIP code" aria-label="Enter ZIP code where you need care" inputmode="numeric" pattern="[0-9]*" autocomplete="postal-code" />
+    <h5 id="childzipcode-text"></h5>
+    </div>
+    <!-- <button type="button" aria-describedby="zip">Next</button> -->
+       
+           <div class="col-12" id="childzipcode_hideBtn">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToCareservices('#when')">Next</button>
+        </div>
+         <div class="col-12" id="childzipcode_hideSubmit">
+          <button type="button" class="btn btn-submit mt-3" onclick="dochildzipcode()">Submit</button>
+        </div>
+  </main>
+        
+      </div>
+    </div>
+    <!-- end zipcode -->
+     <!-- when do you need care -->
+    <div class="tab-pane fade " id="when" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+       
+       <div class="container-when">
+    <h2 class="title-when">When do you need care?</h2>
+    <div class="option" onclick="selectOption(this)">Right now</div>
+    <div class="option " onclick="selectOption(this)">Within a week</div>
+    <div class="option" onclick="selectOption(this)">In 1-2 months</div>
+    <div class="option" onclick="selectOption(this)">Just browsing</div>
+    <!-- <button type="button">Next</button> -->
+     <div class="col-12">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToCareservices('#WHAT')">Next</button>
+        </div>
+  </div>
+        
+      </div>
+    </div>
+     <!-- end here when do you need care -->
+
+     <!-- WHAT KIND OF CARE -->
+       <div class="tab-pane fade " id="WHAT" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+       
+      <div class="container-what">
+    <h2 class="text-what">What kind of care?</h2>
+    <div class="option-list-WHAT">
+      <div class="option-WHAT " data-value="nannies">
+        <div class="option-title-WHAT">Nannies / recurring sitters</div>
+        <div class="option-desc-WHAT">Hire for regular hours, ongoing care, full or part-time</div>
+      </div>
+      <div class="option-WHAT" data-value="one-time">
+        <div class="option-title-WHAT">One-time sitters</div>
+        <div class="option-desc-WHAT">Instantly book for events, occasional plans or backup care</div>
+      </div>
+      <div class="option-WHAT" data-value="daycare">
+        <div class="option-title-WHAT">Daycare centers</div>
+        <div class="option-desc-WHAT">Find daycares, learning centers, or pre-schools near you</div>
+      </div>
+      <div class="option-WHAT" data-value="activities">
+        <div class="option-title-WHAT">Activities & camps</div>
+        <div class="option-desc-WHAT">Book art classes, after-school programs or camps near you</div>
+      </div>
+    </div>
+    <div class="col-12">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToCareservices('#WHO')">Next</button>
+        </div>
+  </div>
+        
+      </div>
+    </div>
+      <!-- END WHAT KIND OF CARE -->
+  <div class="tab-pane fade " id="WHO" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+       
+      <div class="container-WHO">
+    <h2 class="text-WHO">Who needs care?</h2>
+    <form id="careForm">
+      <div id="childrenInputs">
+        <label class="child-label" for="child-1">Child 1</label>
+        <input type="text" id="child-1" name="child-1" placeholder="Month and Year (MM/YYYY)" />
+      </div>
+      <div class="add-child" id="addChildBtn" tabindex="0" role="button" aria-label="Add another child">
+        <span class="plus">+</span> Add another child
+      </div>
+      <label class="checkbox-container">
+        <input type="checkbox" id="expecting" name="expecting" />
+        I'm expecting
+      </label>
+      <button type="submit" class="next-btn" onclick="goToCareservices('#DO')">Next</button>
+    </form>
+  </div>
+        
+      </div>
+    </div>
+    <!-- Do you need any other types of care? -->
+       <div class="tab-pane fade " id="DO" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+       
+      <div class="container-WHO">
+    <h2 class="text-WHO">Do you need any other types of care?</h2>
+  <div class="checkbox-group" role="group" aria-labelledby="question-title">
+        <label class="checkbox-container" for="senior-care">
+          <span class="checkbox-label-text">Senior care</span>
+          <input type="checkbox" id="senior-care" name="careTypes" value="senior-care" />
+        </label>
+        <label class="checkbox-container" for="pet-care">
+          <span class="checkbox-label-text">Pet care</span>
+          <input type="checkbox" id="pet-care" name="careTypes" value="pet-care" />
+        </label>
+        <label class="checkbox-container" for="housekeeping">
+          <span class="checkbox-label-text">Housekeeping</span>
+          <input type="checkbox" id="housekeeping" name="careTypes" value="housekeeping" />
+        </label>
+        <label class="checkbox-container" for="tutoring">
+          <span class="checkbox-label-text">Tutoring</span>
+          <input type="checkbox" id="tutoring" name="careTypes" value="tutoring" />
+        </label>
+      </div>
+
+     <button type="submit" class="next-btn" onclick="goToCareservices('#eaddress')">Next</button>
+      <div class="skip-link">
+      <a href="#" id="skip-link" tabindex="0" onclick="goToCareservices('#eaddress')">Skip for now</a>
+    </div>
+  </div>
+        
+      </div>
+    </div>
+     <!-- end Do you need any other types of care? -->
+
+      <!-- Personal Information -->
+        <div class="tab-pane fade " id="Almost" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+
+ <div class="form-container" role="main" aria-label="User Detail Form" >
+    <p class="heading">Almost done, add a few details about yourself.</p>
+    <form id="join-form" novalidate>
+      <label for="firstName" aria-label="First name input field">First name</label>
+      <input
+        type="text"
+        id="fname"
+        name="firstName"
+        autocomplete="given-name"
+       
+        aria-required="true"
+        aria-describedby="firstNameHelp"
+      />
+      <label for="lastName" aria-label="Last name input field">Last name</label>
+      <input
+        type="text"
+        id="lname"
+        name="lastName"
+        autocomplete="family-name"
+        
+        aria-required="true"
+        aria-describedby="lastNameHelp"
+      />
+
+          <label for="lastName" aria-label="Last name input field">Phone Number</label>
+      <input
+        type="text"
+        id="phone"
+        name="lastName"
+        autocomplete="family-name"
+        
+        aria-required="true"
+        aria-describedby="lastNameHelp"
+      />
+      <p class="terms" id="terms-text">
+        By clicking "Join now", you agree to our
+        <a href="#" target="_blank" rel="noopener" aria-label="Terms of Use">Terms of Use</a> and
+        <a href="#" target="_blank" rel="noopener" aria-label="Privacy Policy">Privacy Policy</a>
+      </p>
+      <button type="button" aria-label="Join now button" onclick="goToCareservices('#psk')">Join now</button>
+    </form>
+  </div>
+
+  </div>
+    </div>
+       <!-- end personal information -->
+
+
+       <!-- Finish setting up your account add client password -->
+          <div class="tab-pane fade " id="psk" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+<main class="container-clientPASS" role="main">
+          <p class="success-message" aria-live="polite" aria-atomic="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 12.5l3 3 5-6" />
+      </svg>
+      Account created!
+    </p>
+            <h2>Finish setting up your account</h2>
+    <form id="passwordForm" novalidate>
+      <div class="password-wrapper">
+        <input
+          type="password"
+          id="passwordInput"
+          placeholder="Password"
+          aria-describedby="passwordError"
+          aria-invalid="false"
+          autocomplete="new-password"
+          required
+          minlength="6"
+          />
+        <button type="button" aria-label="Toggle password visibility" class="toggle-password-btn" id="togglePasswordBtn">
+          <svg class="eye" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <svg class="eye-off" style="display:none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.045 10.045 0 012.223-3.425M9.88 9.88a3 3 0 014.242 4.242M6.44 6.44l11.12 11.12" />
+          </svg>
+        </button>
+      </div>
+      <p id="passwordError" class="error-message" aria-live="assertive"></p>
+      <button type="button" onclick="savedToCMS()">Set password</button>
+    </form>
+</main>
+    </div>
+    </div>
+        <!-- end Finish setting up your account add client password -->
+
+      <!-- what your email address  -->
+        <div class="tab-pane fade " id="eaddress" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+       <div class="container-eaddress" id="">
+  <div class="notification" aria-live="polite">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="9" stroke="#2b461e"/>
+      <path d="M6 10l3 3 5-6" stroke="#2b461e" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    We found <strong ><b id="totalsCount"></b>  caregivers</strong> near you!
+  </div>
+  
+  <h2 class="title-eaddress">What’s your email address?</h2>
+  <p class="para-eaddress">See caregivers who match your needs. It only takes a few seconds.</p>
+  
+  <input 
+    type="email" 
+    id="emailInput" 
+    placeholder="Email address" 
+    aria-label="Email address"
+  />
+  <button id="nextBtn" onclick="goToCareservices('#Almost')">Next</button>
+</div>
+     
+        
+      </div>
+    </div>
+       <!-- end email address  -->
+      <!-- WHO NEED  CARE  -->
+
+      
+        
+       <!-- END WHO NEED CARE -->
+        <!-- senior care -->
+         <!-- What type of care are you interested in? -->
+          
+              <div class="tab-pane fade " id="typeCare" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+            <main class="container-typeCare" role="main" aria-label="Senior care selection interface">
+    <section class="card-image" aria-label="Image showing two women smiling inside a cozy kitchen">
+      <img src="https://static.wixstatic.com/media/7339e9_948764042273493b8f41fc9a0b581efd~mv2.png" alt="A younger woman and an elderly woman smiling warmly and talking in a kitchen setting with plants and soft natural light" onerror="this.style.display='none';" />
+      <div class="card-text-overlay">Find trusted senior care near you</div>
+    </section>
+    <form id="careTypeForm" aria-describedby="question-desc">
+      <label for="careOptions">What type of care are you interested in?</label>
+      <div id="question-desc" style="display:none;">Choose one of the following options for senior care.</div>
+      <button type="button" class="option-button" data-value="In-home care" aria-pressed="false" onclick="goToCareservices('#kindOfhelp')">In-home care</button>
+      <button type="button" class="option-button" data-value="Senior living community" aria-pressed="false"  onclick="goToCareservices('#kindOfhelp')">Senior living community</button>
+      <button type="button" class="option-button" data-value="I am not sure yet" aria-pressed="false"  onclick="goToCareservices('#kindOfhelp')">I am not sure yet</button>
+    </form>
+  </main>
+
+      </div>
+    </div>
+          <!-- end What type of care are you interested in? -->
+           <!-- What kind of help are you looking for? -->
+            <div class="tab-pane fade " id="kindOfhelp" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+             <div class="container-kindOfhelp" role="main" aria-label="Help options form">
+    <h2>What kind of help are you looking for?</h2>
+    <form id="helpForm" novalidate>
+      <label class="option" tabindex="0" for="option1">
+        <div class="option-text">
+          <div class="option-title">Household tasks</div>
+          <div class="option-desc">Errands, housekeeping and meal prep.</div>
+        </div>
+        <input type="checkbox" id="option1" name="helpOptions" value="Household tasks" aria-describedby="desc1" />
+      </label>
+      <label class="option" tabindex="0" for="option2">
+        <div class="option-text">
+          <div class="option-title">Personal care</div>
+          <div class="option-desc">Bathing, dressing and feeding.</div>
+        </div>
+        <input type="checkbox" id="option2" name="helpOptions" value="Personal care" aria-describedby="desc2" />
+      </label>
+      <label class="option" tabindex="0" for="option3">
+        <div class="option-text">
+          <div class="option-title">Companionship</div>
+          <div class="option-desc">Sharing hobbies and lending an ear.</div>
+        </div>
+        <input type="checkbox" id="option3" name="helpOptions" value="Companionship" aria-describedby="desc3" />
+      </label>
+            <label class="option" tabindex="0" for="option4">
+        <div class="option-text">
+          <div class="option-title">Transportation</div>
+          <div class="option-desc">Trips to appointments and errands.</div>
+        </div>
+        <input type="checkbox" id="option4" name="helpOptions" value="Transportation" aria-describedby="desc4" />
+      </label>
+      <label class="option" tabindex="0" for="option5">
+        <div class="option-text">
+          <div class="option-title">Specialized care</div>
+          <div class="option-desc">Memory care, use of special equipment.</div>
+        </div>
+        <input type="checkbox" id="option5" name="helpOptions" value="Specialized care" aria-describedby="desc5" />
+      </label>
+      <label class="option" tabindex="0" for="option6">
+        <div class="option-text">
+          <div class="option-title">Mobility assistance</div>
+          <div class="option-desc">Lift, transfers, physical activity, etc.</div>
+        </div>
+        <input type="checkbox" id="option6" name="helpOptions" value="Mobility assistance" aria-describedby="desc6" />
+      </label>
+      <!-- <button class="btn-kindOfhelp" type="button" id="nextBtn"  onclick="goToCareservices('#Zcodes')">Next</button> -->
+     
+    </form>
+    <button id="nextBtn" typ="button" onclick="goToCareservices('#kindOfhelps')">Next</button>
+  </div>
+      
+  </div>
+  </div>
+  <!-- end What kind of help are you looking for? -->
+             <!-- where are you looking for care -->
+               <div class="tab-pane fade " id="kindOfhelps" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+              <h2 class="content-title text-center">Where are you looking for care?</h2>
+        <main class="container-zipcode" role="main" aria-labelledby="form-title">
+   
+    <div class="input-wrapper">
+      <svg class="icon-location" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 21s-6-5.686-6-10.632a6 6 0 0 1 12 0C18 15.314 12 21 12 21z"></path>
+        <circle cx="12" cy="10" r="2.5"></circle>
+      </svg>
+      <input type="text" class="zip" id="Seniorzipcode" name="zip" placeholder="ZIP code"  />
+      <h5 id="Seniorzipcode-text"></h5>
+    </div>
+    <!-- <button type="button" aria-describedby="zip">Next</button> -->
+        <div class="col-12" id="Seniorzipcode_hideBtn">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToCareservices('#eaddress')">Next</button>
+        </div>
+         <div class="col-12" id="SeniorzipcodeSubmits_Btn">
+          <button type="button" class="btn btn-submit mt-3" onclick="SeniorzipcodeNextBtn()">Submit</button>
+        </div>
+  </main>
+
+      </div>
+    </div>
+              <!-- end where are you looking for care -->
+<!-- end senior care -->
+ <!-- pet care  -->
+  <!-- pet care when do you need care -->
+    <div class="tab-pane fade " id="pet-when" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+       
+       <div class="container-when">
+    <h2 class="title-when">When do you need care?</h2>
+    <div class="option" onclick="selectOption(this)">Right now</div>
+    <div class="option " onclick="selectOption(this)">Within a week</div>
+    <div class="option" onclick="selectOption(this)">In 1-2 months</div>
+    <div class="option" onclick="selectOption(this)">Just browsing</div>
+    <!-- <button type="button">Next</button> -->
+     <div class="col-12">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToCareservices('#pet-tell')">Next</button>
+        </div>
+  </div>
+        
+      </div>
+    </div>
+<!-- tell us  about your pets -->
+        <div class="tab-pane fade " id="pet-tell" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+  
+        <main class="petcare__container" role="main" aria-label="Pet Care Information Form">
+    <h1 class="petcare__header">Tell us about your pets!</h1>
+    <p class="petcare__subheader" id="petcare-question">How many pets need care?</p>
+    <form class="petcare__form" aria-describedby="petcare-question">
+      <label for="dogs" class="petcare__label">Dogs</label>
+      <select id="dogs" name="dogs" class="petcare__select" aria-label="Number of dogs needing care">
+        <option value="0">0</option>
+        <option value="1" selected>1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5+">5+</option>
+      </select>
+      
+      <label for="cats" class="petcare__label">Cats</label>
+      <select id="cats" name="cats" class="petcare__select" aria-label="Number of cats needing care">
+        <option value="0" selected>0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5+">5+</option>
+      </select>
+      <label for="other" class="petcare__label petcare__other-label">Other</label>
+      <select id="other" name="other" class="petcare__select petcare__other" aria-label="Number of other pets needing care">
+        <option value="0" selected>0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5+">5+</option>
+      </select>
+      <button type="button" class="petcare__nextbtn" aria-label="Next step" onclick="goToCareservices('#petcarezipcode')">Next</button>
+    </form>
+  </main>
+          </div>
+    </div>
+
+    <!-- petcarezipcode -->
+   
+
+         <div class="tab-pane fade " id="petcarezipcode" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+              <h2 class="content-title text-center">Let's confirm where you'll need help</h2>
+        <main class="container-zipcode" role="main" aria-labelledby="form-title">
+   
+    <div class="input-wrapper">
+      <svg class="icon-location" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 21s-6-5.686-6-10.632a6 6 0 0 1 12 0C18 15.314 12 21 12 21z"></path>
+        <circle cx="12" cy="10" r="2.5"></circle>
+      </svg>
+      <input type="text" class="zip" id="petzipcode" name="zip" placeholder="ZIP code"  />
+      <h5 id="petcarezipcode-text"></h5>
+    </div>
+    <!-- <button type="button" aria-describedby="zip">Next</button> -->
+        <div class="col-12" id="petcarezipcode_hideBtn">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToCareservices('#eaddress')">Next</button>
+        </div>
+         <div class="col-12" id="hideSubmits_Btn">
+          <button type="button" class="btn btn-submit mt-3" onclick="petcareNextBtn()">Submit</button>
+        </div>
+  </main>
+
+      </div>
+    </div>
+    <!-- end zipcode -->
+
+    <!-- end tell us about your pet -->
+    
+     <!-- Which type of service do you need? -->
+       <div class="tab-pane fade " id="pet-typeOfservice" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+
+          <form class="uniqueForm_container" aria-label="Service Type Selection Form">
+    <h1 class="uniqueForm_title">Which type of service do you need?</h1>
+    <p class="uniqueForm_subtitle">Choose which service applies:</p>
+    <fieldset class="uniqueForm_radioGroup" role="radiogroup" aria-labelledby="servicegroup-label">
+      <legend id="servicegroup-label" class="sr-only">Service choices</legend>
+      
+      <label class="uniqueForm_radioOption" for="service-sitting">
+        <span class="uniqueForm_labelText">Sitting (at your house)</span>
+        <input
+          type="radio"
+          id="service-sitting"
+          name="service-type"
+          value="sitting"
+          class="uniqueForm_radioInput"
+          required
+          aria-describedby="desc-sitting"
+        />
+      </label>
+      <label class="uniqueForm_radioOption" for="service-boarding">
+        <span class="uniqueForm_labelText">Boarding (at caregiver’s house)</span>
+        <input
+          type="radio"
+          id="service-boarding"
+          name="service-type"
+          value="boarding"
+          class="uniqueForm_radioInput"
+          aria-describedby="desc-boarding"
+        />
+      </label>
+      <label class="uniqueForm_radioOption" for="service-walking">
+        <span class="uniqueForm_labelText">Walking</span>
+        <input
+          type="radio"
+          id="service-walking"
+          name="service-type"
+          value="walking"
+          class="uniqueForm_radioInput"
+          aria-describedby="desc-walking"
+        />
+      </label>
+      <label class="uniqueForm_radioOption" for="service-grooming">
+        <span class="uniqueForm_labelText">Grooming</span>
+        <input
+          type="radio"
+          id="service-grooming"
+          name="service-type"
+          value="grooming"
+          class="uniqueForm_radioInput"
+          aria-describedby="desc-grooming"
+          checked
+        />
+      </label>
+      <label class="uniqueForm_radioOption" for="service-training">
+        <span class="uniqueForm_labelText">Training</span>
+        <input
+          type="radio"
+          id="service-training"
+          name="service-type"
+          value="training"
+          class="uniqueForm_radioInput"
+          aria-describedby="desc-training"
+        />
+      </label>
+    </fieldset>
+    <button type="submit" class="uniqueForm_nextButton" aria-label="Proceed to next step">
+      Next
+    </button>
+  </form>
+             </div>
+    </div>
+    <!-- end Which type of service do you need? -->
+<!-- end pet care when do you need care -->
+  <!-- end pet care -->
+   <!-- house keeping -->
+           <div class="tab-pane fade " id="house-typeOfcleaning" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+          <div class="cleaning-ui-container" role="radiogroup" aria-label="Select cleaning type">
+    <p class="cleaning-ui-title">What type of cleaning are you interested in?</p>
+    <div tabindex="0" role="radio" aria-checked="true" class="cleaning-ui-option selected" id="cleaning-option-standard" aria-labelledby="label-standard desc-standard" onclick="selectOption('standard')" onkeypress="if(event.key===' '||event.key==='Enter'){selectOption('standard')}">
+      <p id="label-standard" class="cleaning-ui-option-title">Standard</p>
+      <p id="desc-standard" class="cleaning-ui-option-desc">Maintains your home's cleanliness with the type of cleaning you do daily or weekly.</p>
+    </div>
+    <div tabindex="0" role="radio" aria-checked="false" class="cleaning-ui-option" id="cleaning-option-deep" aria-labelledby="label-deep desc-deep" onclick="selectOption('deep')" onkeypress="if(event.key===' '||event.key==='Enter'){selectOption('deep')}">
+      <p id="label-deep" class="cleaning-ui-option-title">Deep</p>
+      <p id="desc-deep" class="cleaning-ui-option-desc">A thorough and more rigorous cleaning you do a few times a year.</p>
+    </div>
+    <div tabindex="0" role="radio" aria-checked="false" class="cleaning-ui-option" id="cleaning-option-moveout" aria-labelledby="label-moveout desc-moveout" onclick="selectOption('moveout')" onkeypress="if(event.key===' '||event.key==='Enter'){selectOption('moveout')}">
+      <p id="label-moveout" class="cleaning-ui-option-title">Move out</p>
+      <p id="desc-moveout" class="cleaning-ui-option-desc">A deep clean of the entire house, including carpets and all surfaces.</p>
+    </div>
+    <button disabled class="cleaning-ui-button" id="cleaning-submit-button" aria-disabled="true" onclick="goToCareservices('#house-sizeneedcleaning')">Next</button>
+  </div>
+          </div>
+    </div>
+<!-- sizeneedcleaning -->
+     <div class="tab-pane fade " id="house-sizeneedcleaning" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+ <form class="ca-select-wrapper" aria-labelledby="ca-select-question">
+    <p id="ca-select-question" class="ca-select-question">What size is the area that needs cleaning?</p>
+    <div class="ca-select-options" role="radiogroup" aria-required="true">
+      <label class="ca-select-option" for="ca-small">
+        <input
+          class="ca-select-radio"
+          type="radio"
+          id="ca-small"
+          name="area-size"
+          value="small"
+          aria-describedby="desc-small"
+          required
+        />
+        <span class="ca-select-option-title">Small</span>
+        <span id="desc-small" class="ca-select-option-desc">Up to 1,500 square feet</span>
+      </label>
+      <label class="ca-select-option" for="ca-medium">
+        <input
+          class="ca-select-radio"
+          type="radio"
+          id="ca-medium"
+          name="area-size"
+          value="medium"
+          aria-describedby="desc-medium"
+        />
+        <span class="ca-select-option-title">Medium</span>
+        <span id="desc-medium" class="ca-select-option-desc">1,501-3,000 square feet</span>
+      </label>
+      <label class="ca-select-option" for="ca-large">
+        <input
+          class="ca-select-radio"
+          type="radio"
+          id="ca-large"
+          name="area-size"
+          value="large"
+          aria-describedby="desc-large"
+        />
+        <span class="ca-select-option-title">Large</span>
+        <span id="desc-large" class="ca-select-option-desc">Greater than 3,000 square feet</span>
+      </label>
+    </div>
+    <button class="ca-select-next-btn" type="button" disabled onclick="goToCareservices('#house-manybedrooms')">Next</button>
+  </form>
+
+  </div>
+    </div>
+    <!-- end sizeneedcleaning -->
+<!--  house-manybedrooms-->
+     <div class="tab-pane fade " id="house-manybedrooms" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+         <div class="ui-container" role="region" aria-label="Bedroom and Bathroom count selection">
+    <h2 class="ui-title">How many bedrooms and<br />bathrooms are there?</h2>
+    <div class="ui-group" aria-label="Bedroom count selection">
+      <div class="ui-label">Bedrooms</div>
+      <div class="ui-controls">
+        <button class="ui-button" type="button" aria-label="Decrease bedrooms">−</button>
+        <div class="ui-count" aria-live="polite" aria-atomic="true">2</div>
+        <button class="ui-button" type="button" aria-label="Increase bedrooms">+</button>
+      </div>
+    </div>
+    <div class="ui-group" aria-label="Bathroom count selection">
+      <div class="ui-label">Bathrooms</div>
+      <div class="ui-controls">
+        <button class="ui-button" type="button" aria-label="Decrease bathrooms">−</button>
+        <div class="ui-count" aria-live="polite" aria-atomic="true">2</div>
+        <button class="ui-button" type="button" aria-label="Increase bathrooms">+</button>
+      </div>
+    </div>
+    <button class="ui-btn-next" type="button" aria-label="Go to next step" onclick="goToCareservices('#housekeepingzipcode')">Next</button>
+  </div>
+        </div>
+    </div>
+    <!-- end house-manybedrooms -->
+     <!--  housekeepingzipcode-->
+    
+         <div class="tab-pane fade " id="housekeepingzipcode" role="tabpanel" >
+      <div class="row g-4 justify-content-center">
+              <h2 class="content-title text-center">Let's confirm where you'll need help</h2>
+        <main class="container-zipcode" role="main" aria-labelledby="form-title">
+   
+    <div class="input-wrapper">
+      <svg class="icon-location" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 21s-6-5.686-6-10.632a6 6 0 0 1 12 0C18 15.314 12 21 12 21z"></path>
+        <circle cx="12" cy="10" r="2.5"></circle>
+      </svg>
+      <input type="text" class="zip" id="housezipcode" name="zip" placeholder="ZIP code"  />
+      <h5 id="housezipcode-text"></h5>
+    </div>
+    <!-- <button type="button" aria-describedby="zip">Next</button> -->
+        <div class="col-12" id="housezipcode_hideBtn">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToCareservices('#eaddress')">Next</button>
+        </div>
+         <div class="col-12" id="houseSubmits_Btn">
+          <button type="button" class="btn btn-submit mt-3" onclick="houseKeepingNextBtn()">Submit</button>
+        </div>
+  </main>
+
+      </div>
+    </div>
+       <!-- end housekeepingzipcode-->
+    <!-- end  house keeping -->
+    <!-- schdedule  -->
+    <!-- Schedule Tab -->
+<div class="tab-pane fade" id="schedule" role="tabpanel">
+  <div class="row g-4">
+    <h4 id="PreferredText">Preferred Schedule</h4>
+    <!-- Preferred Schedule Checkboxes -->
+    <div class="mb-3" id="PreferredContent">
+      <label class="form-label">Select Preferred Schedule *</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="midShift" value="Mid Shift">
+        <label class="form-check-label" for="midShift">Mid Shift</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="nightShift" value="Night Shift">
+        <label class="form-check-label" for="nightShift">Night Shift</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="dayShift" value="Day Shift">
+        <label class="form-check-label" for="dayShift">Day Shift</label>
+      </div>
+    </div>
+
+    <h4 id="AvailabilityText">Availability Schedule</h4>
+    <!-- Availability Schedule Checkboxes -->
+    <div class="mb-3" id="AvailabilityContainer">
+      <label class="form-label">Select Days Available *</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="monday" value="Monday">
+        <label class="form-check-label" for="monday">Monday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="tuesday" value="Tuesday">
+        <label class="form-check-label" for="tuesday">Tuesday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="wednesday" value="Wednesday">
+        <label class="form-check-label" for="wednesday">Wednesday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="thursday" value="Thursday">
+        <label class="form-check-label" for="thursday">Thursday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="friday" value="Friday">
+        <label class="form-check-label" for="friday">Friday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="saturday" value="Saturday">
+        <label class="form-check-label" for="saturday">Saturday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="sunday" value="Sunday">
+        <label class="form-check-label" for="sunday">Sunday</label>
+      </div>
+    </div>
+
+    <!-- Valid ID -->
+    <!-- <div class="mb-3 d-flex align-items-center">
+      <div class="image-placeholder" id="validIdPreview"></div>
+      <label class="form-label mb-0 me-2">Valid ID *</label>
+      <input type="file" id="valid-id" accept="image/*">
+      <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('valid-id').click()">Change File</button>
+    </div> -->
+
+    <!-- Formal Picture -->
+    <!-- <div class="mb-3 d-flex align-items-center">
+      <div class="image-placeholder" id="formalPicPreview"></div>
+      <label class="form-label mb-0 me-2">Formal Picture *</label>
+      <input type="file" id="formal-picture" accept="image/*">
+      <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('formal-picture').click()">Change File</button>
+    </div> -->
+       <div class="col-12" style="margin-top: 200px;">
+          <button type="button" class="btn btn-submit mt-3" onclick="savedToCMS()" >Submit</button>
+        </div>
+  </div>
+</div>
+
+
+
+
+    <div class="tab-pane fade" id="per-info" role="tabpanel">
+      <div class="text-center mb-4">
+  <img src="sh.jpg" alt="Senior Star Homecare" style="max-width: 250px;">
+</div>
+
+      <div class="row g-4">
+    
+ <h4 class="mb-4">Personal Information</h4>
+      <form class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">First name *</label>
+          <input type="text" class="form-control" placeholder="First name" id="fname">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Last name *</label>
+          <input type="text" class="form-control" placeholder="Last name" id="lname">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Middle name *</label>
+          <input type="text" class="form-control" placeholder="Middle name" id="mname">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Suffix *</label>
+          <select class="form-select" id="suffix">
+            <option selected disabled>Suffix</option>
+            <option value="Jr">Jr.</option>
+            <option value="Sr">Sr.</option>
+            <option value="II">II</option>
+            <option value="III">III</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Gender</label>
+          <select class="form-select" id="gender">
+            <option selected disabled>Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          
+     
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">US Address *</label>
+          <input type="text" class="form-control" placeholder="US Address" id="usaddress">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Zip code *</label>
+          <input type="text" class="form-control" placeholder="Zip code" id="zipcode">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Work experience *</label>
+          <input type="text" class="form-control" placeholder="Work experience" id="experience">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Character experience *</label>
+          <input type="text" class="form-control" placeholder="Character experience" id="reference">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Phone number *</label>
+          <input type="text" class="form-control" placeholder="Phone number" id="phone" id="phone">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Email Address *</label>
+          <input type="email" class="form-control" placeholder="Email Address" id="email">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Password *</label>
+          <input type="password" class="form-control" placeholder="Password" id="pwd">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Talents *</label>
+          <input type="text" class="form-control" placeholder="Talents" id="talents" >
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Skills & Expertise *</label>
+          <input type="text" class="form-control" placeholder="Skills & Expertise" id="skills">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Home care aide HCA number *</label>
+          <input type="text" class="form-control" placeholder="Home care aide HCA number" id="hca">
+        </div>
+
+        <div class="col-12">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToSchedule('#schedule')">Submit</button>
+        </div>
+      </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let role = '';
+  let userRole = '';
+  let useraddress = ''
+  let usZipcode = ''
+   document.getElementById("hideZipcode").style.display = "none";
+    document.getElementById("petcarezipcode_hideBtn").style.display = "none";
+     document.getElementById("housezipcode_hideBtn").style.display = "none";
+      document.getElementById("Seniorzipcode_hideBtn").style.display = "none";
+         document.getElementById("childzipcode_hideBtn").style.display = "none";
+    window.addEventListener("message", (event) => {
+    // Make sure it’s coming from your Wix site
+    console.log("Message received:", event.data);
+
+    if (event.data.type === "zipcodeResult") {
+        document.getElementById("totalsCount").innerText = 
+             event.data.total;
+            console.log(event.data.total);
+            
+    }
+});
+     function dochildzipcode(){
+         document.getElementById("childzipcode_hideSubmit").style.display = "none"
+           document.getElementById("childzipcode_hideBtn").style.display = "block"
+              const zips = document.getElementById("childzipcode").value.trim();
+   let usaZip = document.getElementById("childzipcode").value
+
+    if (!/^\d{5}$/.test(zips)) {
+       
+        alert("Please enter a valid 5-digit US ZIP code.")
+     
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zips}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+          // addressDiv.innerHTML = `
+          //   <strong>Place Name:</strong> ${place['place name']}<br/>
+          //   <strong>State:</strong> ${place['state']}<br/>
+          //   <strong>State Abbreviation:</strong> ${place['state abbreviation']}<br/>
+          //   <strong>Latitude:</strong> ${place['latitude']}<br/>
+          //   <strong>Longitude:</strong> ${place['longitude']}
+          // `;
+           useraddress =  place['place name']
+           usZipcode = usaZip;
+           let state  = place['state']
+    // document.getElementById("hideZipcode").style.display = "block";
+    //   document.getElementById("hideZipcodes").style.display = "block";
+
+           console.log(useraddress,usZipcode);
+           
+         document.getElementById("childzipcode-text").innerHTML = useraddress + ", " + state;
+          // document.getElementById("zipAddesss").innerHTML = useraddress + ", " + state;
+          window.parent.postMessage({ action: "SearchZipcode", data: {usZipcode} }, "*");
+        })
+        .catch(error => {
+         
+          console.log(error.message);
+          
+        });
+console.log("hshahahhahahaha");
+      }
+
+     function SeniorzipcodeNextBtn(){
+         document.getElementById("SeniorzipcodeSubmits_Btn").style.display = "none"
+           document.getElementById("Seniorzipcode_hideBtn").style.display = "block"
+              const zips = document.getElementById("Seniorzipcode").value.trim();
+   let usaZip = document.getElementById("Seniorzipcode").value
+    if (!/^\d{5}$/.test(zips)) {
+       
+        alert("Please enter a valid 5-digit US ZIP code.")
+     
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zips}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+          // addressDiv.innerHTML = `
+          //   <strong>Place Name:</strong> ${place['place name']}<br/>
+          //   <strong>State:</strong> ${place['state']}<br/>
+          //   <strong>State Abbreviation:</strong> ${place['state abbreviation']}<br/>
+          //   <strong>Latitude:</strong> ${place['latitude']}<br/>
+          //   <strong>Longitude:</strong> ${place['longitude']}
+          // `;
+           useraddress =  place['place name']
+           usZipcode = usaZip;
+           let state  = place['state']
+    // document.getElementById("hideZipcode").style.display = "block";
+    //   document.getElementById("hideZipcodes").style.display = "block";
+
+           console.log(useraddress,usZipcode);
+           
+         document.getElementById("Seniorzipcode-text").innerHTML = useraddress + ", " + state;
+          // document.getElementById("zipAddesss").innerHTML = useraddress + ", " + state;
+          window.parent.postMessage({ action: "SearchZipcode", data: {usZipcode} }, "*");
+        })
+        .catch(error => {
+         
+          console.log(error.message);
+          
+        });
+console.log("hshahahhahahaha");
+      }
+       function houseKeepingNextBtn(){
+        const zips = document.getElementById("housezipcode").value.trim();
+   let usaZip = document.getElementById("housezipcode").value
+    if (!/^\d{5}$/.test(zips)) {
+       
+        alert("Please enter a valid 5-digit US ZIP code.")
+     
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zips}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+          // addressDiv.innerHTML = `
+          //   <strong>Place Name:</strong> ${place['place name']}<br/>
+          //   <strong>State:</strong> ${place['state']}<br/>
+          //   <strong>State Abbreviation:</strong> ${place['state abbreviation']}<br/>
+          //   <strong>Latitude:</strong> ${place['latitude']}<br/>
+          //   <strong>Longitude:</strong> ${place['longitude']}
+          // `;
+           useraddress =  place['place name']
+           usZipcode = usaZip;
+           let state  = place['state']
+    // document.getElementById("hideZipcode").style.display = "block";
+    //   document.getElementById("hideZipcodes").style.display = "block";
+    document.getElementById("housezipcode_hideBtn").style.display = "block";
+       document.getElementById("houseSubmits_Btn").style.display = "none";
+           console.log(useraddress,usZipcode);
+           
+         document.getElementById("housezipcode-text").innerHTML = useraddress + ", " + state;
+          // document.getElementById("zipAddesss").innerHTML = useraddress + ", " + state;
+          window.parent.postMessage({ action: "SearchZipcode", data: {usZipcode} }, "*");
+        })
+        .catch(error => {
+         
+          console.log(error.message);
+          
+        });
+console.log("hshahahhahahaha");
+
+    }
+
+    function petcareNextBtn(){
+        const zips = document.getElementById("petzipcode").value.trim();
+   let usaZip = document.getElementById("petzipcode").value
+    if (!/^\d{5}$/.test(zips)) {
+       
+        alert("Please enter a valid 5-digit US ZIP code.")
+     
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zips}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+          // addressDiv.innerHTML = `
+          //   <strong>Place Name:</strong> ${place['place name']}<br/>
+          //   <strong>State:</strong> ${place['state']}<br/>
+          //   <strong>State Abbreviation:</strong> ${place['state abbreviation']}<br/>
+          //   <strong>Latitude:</strong> ${place['latitude']}<br/>
+          //   <strong>Longitude:</strong> ${place['longitude']}
+          // `;
+           useraddress =  place['place name']
+           usZipcode = usaZip;
+           let state  = place['state']
+    // document.getElementById("hideZipcode").style.display = "block";
+    //   document.getElementById("hideZipcodes").style.display = "block";
+    document.getElementById("petcarezipcode_hideBtn").style.display = "block";
+       document.getElementById("hideSubmits_Btn").style.display = "none";
+           console.log(useraddress,usZipcode);
+           
+         document.getElementById("petcarezipcode-text").innerHTML = useraddress + ", " + state;
+          // document.getElementById("zipAddesss").innerHTML = useraddress + ", " + state;
+          window.parent.postMessage({ action: "SearchZipcode", data: {usZipcode} }, "*");
+        })
+        .catch(error => {
+         
+          console.log(error.message);
+          
+        });
+console.log("hshahahhahahaha");
+
+    }
+  function previewImage(input, previewId) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+function test(event){
+  if(event) event.preventDefault(); // stop refresh if inside form
+
+  Swal.fire({
+    title: "Successfully!",
+    text: "You know Succesfully registered!",
+    icon: "success"
+  });
+}
+
+ function showNext(){
+   const zips = document.getElementById("zipcode").value.trim();
+   let usaZip = document.getElementById("zipcode").value
+    if (!/^\d{5}$/.test(zips)) {
+       
+        alert("Please enter a valid 5-digit US ZIP code.")
+     
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zips}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+          // addressDiv.innerHTML = `
+          //   <strong>Place Name:</strong> ${place['place name']}<br/>
+          //   <strong>State:</strong> ${place['state']}<br/>
+          //   <strong>State Abbreviation:</strong> ${place['state abbreviation']}<br/>
+          //   <strong>Latitude:</strong> ${place['latitude']}<br/>
+          //   <strong>Longitude:</strong> ${place['longitude']}
+          // `;
+           useraddress =  place['place name']
+           usZipcode = usaZip;
+           let state  = place['state']
+    document.getElementById("hideZipcode").style.display = "block";
+      document.getElementById("hideZipcodes").style.display = "block";
+    document.getElementById("hideSubmit").style.display = "none";
+       document.getElementById("hideSubmits").style.display = "none";
+           console.log(useraddress,usZipcode);
+           
+         document.getElementById("zipAddess").innerHTML = useraddress + ", " + state;
+          document.getElementById("zipAddesss").innerHTML = useraddress + ", " + state;
+          window.parent.postMessage({ action: "SearchZipcode", data: {usZipcode} }, "*");
+        })
+        .catch(error => {
+         
+          console.log(error.message);
+          
+        });
+
+ }
+
+ function showNextBtn(){
+   const zips = document.getElementById("zipcode").value.trim();
+   let usaZip = document.getElementById("zipcode").value
+    if (!/^\d{5}$/.test(zips)) {
+       
+        alert("Please enter a valid 5-digit US ZIP code.")
+     
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zips}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+          // addressDiv.innerHTML = `
+          //   <strong>Place Name:</strong> ${place['place name']}<br/>
+          //   <strong>State:</strong> ${place['state']}<br/>
+          //   <strong>State Abbreviation:</strong> ${place['state abbreviation']}<br/>
+          //   <strong>Latitude:</strong> ${place['latitude']}<br/>
+          //   <strong>Longitude:</strong> ${place['longitude']}
+          // `;
+           useraddress =  place['place name']
+           usZipcode = usaZip;
+           let state  = place['state']
+    document.getElementById("hideZipcode").style.display = "block";
+      document.getElementById("hideZipcodes").style.display = "block";
+    document.getElementById("hideSubmit").style.display = "none";
+       document.getElementById("hideSubmits").style.display = "none";
+           console.log(useraddress,usZipcode);
+           
+         document.getElementById("zipAddess").innerHTML = useraddress + ", " + state;
+          document.getElementById("zipAddesss").innerHTML = useraddress + ", " + state;
+          window.parent.postMessage({ action: "SearchZipcode", data: {usZipcode} }, "*");
+        })
+        .catch(error => {
+         
+          console.log(error.message);
+          
+        });
+
+ }
+  // document.getElementById('valid-id').addEventListener('change', function() {
+  //   previewImage(this, 'validIdPreview');
+  // });
+
+  // document.getElementById('formal-picture').addEventListener('change', function() {
+  //   previewImage(this, 'formalPicPreview');
+  // });
+    function switchTab(tabId,userRoles) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+
+      
+    userRole = userRoles
+  }
+   function goToCareservices(tabId) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+   role = "caregiver";
+  }
+    function goToSchedule(tabId) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+     window.parent.postMessage({ action: "showButton" }, "*");
+  }
+   function clientBtn(tabId) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+      document.getElementById("experience").readOnly = true
+      document.getElementById("reference").readOnly = true
+       document.getElementById("talents").readOnly = true
+      document.getElementById("skills").readOnly = true
+      document.getElementById("hca").readOnly = true
+      document.getElementById("AvailabilityContainer").style.display = "none"
+      document.getElementById("AvailabilityText").style.display = "none"
+      document.getElementById("PreferredContent").style.display = "none"
+      document.getElementById("PreferredText").style.display = "none"
+  }
+  function savedToCMS(){
+    
+      let items = [];
+    let fname = document.getElementById("fname").value;
+let lname = document.getElementById("lname").value;
+let mname = document.getElementById("mname").value;
+let suffix = document.getElementById("suffix").value;
+let gender = document.getElementById("gender").value;
+let usaddress = document.getElementById("usaddress").value;
+let zipcode = document.getElementById("zipcode").value;
+let experience = document.getElementById("experience").value;
+let reference = document.getElementById("reference").value;
+let phone = document.getElementById("phone").value;
+let email = document.getElementById("emailInput").value;
+let pwd = document.getElementById("passwordInput").value;
+let talents = document.getElementById("talents").value;
+let skills = document.getElementById("skills").value;
+let hca = document.getElementById("hca").value;
+// let formalpicture = document.getElementById("formal-picture");
+// // let validid = document.getElementById("valid-id");
+// // let formalFile = formalpicture.files[0]; // 👈 this is the real file object
+// // let validFile = validid.files[0];
+
+const checked = document.querySelectorAll('#AvailabilityContainer input[type="checkbox"]:checked');
+const checkeds = document.querySelectorAll('#PreferredContent input[type="checkbox"]:checked');
+    const checkedvalues = Array.from(checked).map(cb => cb.value);
+     const checkedsvalues = Array.from(checkeds).map(cb => cb.value);
+    console.log(role,userRole);
+    console.log(fname,lname,mname,suffix,gender,useraddress,zipcode,experience,reference,phone,email,pwd,talents,skills,hca);
+    console.log(checkedvalues);
+    console.log(checkedsvalues);
+     items.push({ role, userRole, fname,lname,mname,suffix,gender,useraddress,zipcode,experience,reference,phone,email,pwd,talents,skills,hca,checkedvalues,checkedsvalues});
+      window.parent.postMessage({ action: "create", data: {role, userRole, fname,lname,mname,suffix,gender,useraddress,usZipcode,experience,reference,phone,email,pwd,talents,skills,hca,checkedvalues,checkedsvalues } }, "*");
+// formal-picture
+// valid-id
+
+ showalert()
+  window.addEventListener("message", (event) => {
+      if (event.data.action === "doshowAlert") {
+         Swal.fire({
+        title: "Successfully!",
+        text: "You know Successfully registered!",
+        icon: "success",
+         confirmButtonText: "OK"
+      }).then((result) => {
+  if (result.isConfirmed) {
+     window.parent.postMessage({ action: "ToLogin", data: {role} }, "*");
+  }
+});
+
+      }
+    });
+  }
+  function  showalert(){
+     window.parent.postMessage({ action: "showalert", data: {role} }, "*");
+     
+  }
+    window.addEventListener("message", (event) => {
+      if (event.data.action === "load") {
+        items = event.data.items;
+        renderTable();
+      }
+    });
+    // WHO NEED CARE 
+    window.addEventListener("message", (event) => {
+    // Make sure it’s coming from your Wix site
+    console.log("Message received:", event.data);
+
+    if (event.data.type === "zipcodeResult") {
+        document.getElementById("totalsCount").innerText = 
+             event.data.total;
+            console.log(event.data.total);
+            
+    }
+});
+    // END HERE WHO NEED  CARE
+</script>
+<script>
+        document.getElementById("Seniorzipcode_hideBtn").style.display = "none";
+         document.getElementById("childzipcode_hideBtn").style.display = "none";
+   document.getElementById("petcarezipcode_hideBtn").style.display = "none";
+     document.getElementById("housezipcode_hideBtn").style.display = "none";
+
+    window.addEventListener("message", (event) => {
+    // Make sure it’s coming from your Wix site
+    console.log("Message received:", event.data);
+
+    if (event.data.type === "zipcodeResult") {
+        document.getElementById("totalsCount").innerText = 
+             event.data.total;
+            console.log(event.data.total);
+            
+    }
+});
+     const addChildBtn = document.getElementById('addChildBtn');
+    const childrenInputs = document.getElementById('childrenInputs');
+    let childCount = 1;
+    function createChildInput(index) {
+      const label = document.createElement('label');
+      label.className = 'child-label';
+      label.htmlFor = `child-${index}`;
+      label.textContent = `Child ${index}`;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = `child-${index}`;
+      input.name = `child-${index}`;
+      input.placeholder = 'Month and Year (MM/YYYY)';
+      childrenInputs.appendChild(label);
+      childrenInputs.appendChild(input);
+    }
+    addChildBtn.addEventListener('click', () => {
+      childCount++;
+      createChildInput(childCount);
+    });
+    addChildBtn.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        childCount++;
+        createChildInput(childCount);
+      }
+    });
+    document.getElementById('careForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Here you can handle form submission or validation
+      alert('Form submitted!');
+    });
+</script>
+
+  <script>
+     document.getElementById("petcarezipcode_hideBtn").style.display = "none";
+     document.getElementById("housezipcode_hideBtn").style.display = "none";
+    window.addEventListener("message", (event) => {
+    // Make sure it’s coming from your Wix site
+    console.log("Message received:", event.data);
+
+    if (event.data.type === "zipcodeResult") {
+        document.getElementById("totalsCount").innerText = 
+             event.data.total;
+            console.log(event.data.total);
+            
+    }
+});
+    (function(){
+      const passwordInput = document.getElementById('passwordInput');
+      const toggleButton = document.getElementById('togglePasswordBtn');
+      const passwordError = document.getElementById('passwordError');
+      const form = document.getElementById('passwordForm');
+      // Toggle password visibility
+      toggleButton.addEventListener('click', () => {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        toggleButton.querySelector('.eye').style.display = isPassword ? 'none' : 'inline';
+        toggleButton.querySelector('.eye-off').style.display = isPassword ? 'inline' : 'none';
+      });
+      // Validation and error display
+      function validatePassword() {
+        const val = passwordInput.value.trim();
+        if (!val) {
+          passwordError.textContent = 'Password is required';
+           passwordInput.classList.add('error');
+          passwordInput.setAttribute('aria-invalid', 'true');
+          return false;
+        } else if (val.length < 6) {
+          passwordError.textContent = 'Password must be at least 6 characters';
+          passwordInput.classList.add('error');
+          passwordInput.setAttribute('aria-invalid', 'true');
+          return false;
+        }
+        passwordError.textContent = '';
+        passwordInput.classList.remove('error');
+        passwordInput.setAttribute('aria-invalid', 'false');
+        return true;
+      }
+      passwordInput.addEventListener('input', () => {
+        if (passwordInput.classList.contains('error')) {
+          validatePassword();
+        }
+      });
+      // Form submit handler
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if (validatePassword()) {
+          alert('Password set successfully!');
+          // Here you can do any further processing you want.
+          form.reset();
+          passwordInput.type = 'password';
+          toggleButton.querySelector('.eye').style.display = 'inline';
+          toggleButton.querySelector('.eye-off').style.display = 'none';
+        }
+      });
+    })();
+ </script>
+ <script>
+     document.getElementById("housezipcode_hideBtn").style.display = "none";
+
+  const options = {
+    standard: document.getElementById("cleaning-option-standard"),
+    deep: document.getElementById("cleaning-option-deep"),
+    moveout: document.getElementById("cleaning-option-moveout"),
+  };
+  const button = document.getElementById("cleaning-submit-button");
+  function selectOption(optionKey) {
+    Object.keys(options).forEach(key => {
+      const option = options[key];
+      if (key === optionKey) {
+        option.classList.add("selected");
+        option.setAttribute("aria-checked", "true");
+      } else {
+        option.classList.remove("selected");
+        option.setAttribute("aria-checked", "false");
+      }
+    });
+    button.disabled = false;
+    button.setAttribute("aria-disabled", "false");
+  }
+</script>
+
+ <script>
+    // Add selection effect and enable button
+        window.addEventListener("message", (event) => {
+    // Make sure it’s coming from your Wix site
+    console.log("Message received:", event.data);
+
+    if (event.data.type === "zipcodeResult") {
+        document.getElementById("totalsCount").innerText = 
+             event.data.total;
+            console.log(event.data.total);
+            
+    }
+});
+    const optionss = document.querySelectorAll(".ca-select-option");
+    const radios = document.querySelectorAll(".ca-select-radio");
+    const nextBtn = document.querySelector(".ca-select-next-btn");
+    radios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        optionss.forEach((opt) => opt.classList.remove("ca-select-option--selected"));
+        radio.parentElement.classList.add("ca-select-option--selected");
+        nextBtn.disabled = false;
+      });
+    });
+  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

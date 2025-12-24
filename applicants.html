@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Job Posted</title>
+  <style>
+    body {
+      background-color: #fef6e9;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      padding: 40px 20px;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .search-container {
+      position: relative;
+      width: 60%;
+      max-width: 600px;
+      margin: 20px auto 40px;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 14px 45px 14px 20px;
+      font-size: 16px;
+      border: 2px solid #f6b26b;
+      border-radius: 25px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: #333;
+    }
+
+    .jobs-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .job-card {
+      background: white;
+      border: 2px solid #f6b26b;
+      border-radius: 8px;
+      width: 250px;
+      padding: 15px;
+      text-align: left;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .job-card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* .job-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    } */
+     .job-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+.job-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+    .job-description {
+      font-size: 14px;
+      color: #333;
+    }
+
+    iframe.map {
+      width: 100%;
+      height: 150px;
+      border: 0;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .job-location {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .job-location::before {
+      content: "📍";
+      margin-right: 5px;
+    }
+
+    .pagination {
+      margin-top: 30px;
+    }
+
+    .pagination button {
+      background-color: #f6b26b;
+      border: none;
+      padding: 10px 15px;
+      margin: 0 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+    }
+
+    .pagination .page-btn {
+      background-color: #ffd699;
+    }
+
+    .pagination button:hover {
+      background-color: #f4a261;
+    }
+
+    .job-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .action-btn {
+      background-color: #f6b26b;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: #f4a261;
+    }
+
+    /* Modal Styles */
+    /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-top: 100px;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 10px;
+    max-width: 900px;
+    width: 80%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .modal-content h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .modal-input-container {
+    width: 48%; /* Adjust width for left and right sections */
+  }
+
+  label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #555;
+    display: block;
+  }
+
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+    border-color: #f6b26b;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .modal-footer button {
+    padding: 12px 30px;
+    background-color: #f6b26b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  .modal-footer button:hover {
+    background-color: #f4a261;
+  }
+
+  /* Close button */
+  .close {
+    color: #333;
+    font-size: 32px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #f4a261;
+  }
+
+  /* Show the modal when it's active */
+  .modal.show {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+  }
+  .job-title-number {
+  background-color: #f6b26b;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>JOB POSTED</h1>
+
+    <!-- Search Input -->
+    <div class="search-container">
+      <input type="text" id="search" placeholder="Search jobs..." oninput="filterJobs()">
+      <span class="search-icon">🔍</span>
+    </div>
+
+    <!-- Job Listings -->
+    <div class="jobs-container" id="jobs-container">
+      <!-- Job cards will be inserted here dynamically -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button onclick="prevPage()">&#10094;</button>
+      <button onclick="goToPage(1)" class="page-btn">1</button>
+      <button onclick="goToPage(2)" class="page-btn">2</button>
+      <button onclick="goToPage(3)" class="page-btn">3</button>
+      <button onclick="nextPage()">&#10095;</button>
+    </div>
+  </div>
+
+  <!-- Modal for Editing Job -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Edit Job</h2>
+
+    <!-- Left Side: Job Title and Description -->
+    <div class="modal-input-container">
+      <label for="edit-job-title">Job Title</label>
+      <select id="edit-job-title">
+        <option value="software-engineer">Software Engineer</option>
+        <option value="data-scientist">Data Scientist</option>
+        <option value="product-manager">Product Manager</option>
+        <option value="graphic-designer">Graphic Designer</option>
+        <option value="ux-designer">UX Designer</option>
+        <option value="project-manager">Project Manager</option>
+        <option value="marketing-specialist">Marketing Specialist</option>
+      </select>
+
+      <label for="edit-job-description">Job Description</label>
+      <textarea id="edit-job-description" placeholder="Job Description"></textarea>
+
+      <!-- Job Type -->
+      <label for="edit-job-type">Job Type</label>
+      <select id="edit-job-type">
+        <option value="full-time">Full-Time</option>
+        <option value="part-time">Part-Time</option>
+        <option value="contract">Contract</option>
+        <option value="internship">Internship</option>
+      </select>
+    </div>
+
+    <!-- Right Side: Zipcode, Address, and Salary Rate -->
+    <div class="modal-input-container">
+      <label for="edit-job-location">Location</label>
+      <input type="text" id="edit-job-location" placeholder="Job Location">
+
+      <label for="edit-job-zipcode">Zipcode</label>
+      <input type="text" id="edit-job-zipcode" placeholder="Zipcode">
+
+      <label for="edit-pay-rate">Salary Rate</label>
+      <input type="number" id="edit-pay-rate" placeholder="Pay Rate">
+    </div>
+
+    <div class="modal-footer">
+      <button onclick="saveJobChanges()">Save</button>
+    </div>
+  </div>
+</div>
+
+
+  <script>
+    let jobsData = [];
+    let filteredJobs = [];
+       let currentPage = 1;
+    const itemsPerPage = 3;
+    let selectedJobIndex = null;
+
+    // Function to render job listings
+    function renderJobs() {
+      const jobsContainer = document.getElementById("jobs-container");
+      jobsContainer.innerHTML = "";
+
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const jobsToShow = filteredJobs.slice(start, end);
+
+      jobsToShow.forEach((job, index) => {
+        const mapQuery = encodeURIComponent(job.location || "");
+        const iframeURL = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
+
+        const jobCard = document.createElement("div");
+        jobCard.className = "job-card";
+        jobCard.innerHTML = `
+       <div class="job-title-container">
+   <span class="job-title-number">${job.applicantCount}</span>
+  </div>
+   <div class="job-title">${job.job_title || "No Title"}</div>
+  <div class="job-description">${job.job_description || ""}</div>
+  <iframe class="map" src="${iframeURL}" loading="lazy"></iframe>
+  <div class="job-location">${job.location || ""}</div>
+  <div class="job-actions">
+    <button class="action-btn" onclick="editJob(${job.jobid})">View</button>
+  </div>
+        `;
+        jobsContainer.appendChild(jobCard);
+      });
+    }
+
+    // Function to open the modal and load the job data into the form
+    function editJob(index) {
+      // const job = filteredJobs[index];
+      // selectedJobIndex = index;
+
+      // document.getElementById("edit-job-title").value = job.job_title;
+      // document.getElementById("edit-job-description").value = job.job_description;
+      // document.getElementById("edit-job-location").value = job.location;
+      // document.getElementById("edit-pay-rate").value = job.pay_rate;
+
+      // // Open the modal with transition
+      // openModal();
+      console.log(index);
+
+      window.parent.postMessage({ action: "ToLoadApparesedDATA", data: {index} }, "*");
+      
+    }
+
+    // Function to save changes made in the modal
+    function saveJobChanges() {
+      const updatedJob = {
+        ...filteredJobs[selectedJobIndex],
+        job_title: document.getElementById("edit-job-title").value,
+        job_description: document.getElementById("edit-job-description").value,
+        location: document.getElementById("edit-job-location").value,
+        pay_rate: document.getElementById("edit-pay-rate").value,
+      };
+
+      // Send the updated job data to the parent (in case of a page using a parent-child relationship)
+      window.parent.postMessage({
+        action: "update",
+        data: updatedJob
+      }, "*");
+
+      closeModal();
+    }
+
+    // Close the modal
+    function closeModal() {
+      document.getElementById("editModal").classList.remove('show');
+    }
+
+    // Open the modal
+    function openModal() {
+      document.getElementById("editModal").classList.add('show');
+    }
+
+    // Function to delete a job
+    function deleteJob(index) {
+      const jobToDelete = filteredJobs[index];
+      window.parent.postMessage({
+        action: "delete",
+        data: jobToDelete
+      }, "*");
+    }
+
+    // Function to navigate to a specific page
+    function goToPage(page) {
+      const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderJobs();
+      }
+    }
+
+    // Function to go to the previous page
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderJobs();
+      }
+    }
+
+    // Function to go to the next page
+    function nextPage() {
+      const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderJobs();
+      }
+    }
+
+    // Function to filter job listings based on search query
+    function filterJobs() {
+      const query = document.getElementById("search").value.toLowerCase();
+      filteredJobs = jobsData.filter(job =>
+        (job.job_title || "").toLowerCase().includes(query) ||
+        (job.job_description || "").toLowerCase().includes(query) ||
+        (job.location || "").toLowerCase().includes(query)
+      );
+      currentPage = 1;
+      renderJobs();
+    }
+
+    // Function to listen for messages from the parent (e.g., Wix)
+    window.onmessage = function(event) {
+      if (!event.data || !event.data.action) return;
+
+      const { action, items } = event.data;
+      if (action === "load") {
+        jobsData = items || [];
+        filteredJobs = [...jobsData];
+        renderJobs();
+      }
+    };
+
+    // Optional: Request data on load (uncomment if needed)
+    window.onload = function () {
+      // parent.postMessage({ action: "requestData" }, "*");
+    };
+  </script>
+</body>
+
+</html>
+
+>

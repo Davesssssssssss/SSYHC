@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile UI - Personal Information</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Add a default background image or ensure it's set dynamically */
+    .profile-header-bg {
+      background: url('https://via.placeholder.com/1500x300/A0B2C7/FFFFFF?text=Profile+Header') center center/cover no-repeat; /* Default header background */
+      min-height: 200px; /* Ensure header has some height */
+    }
+    .profile-pic {
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.2);
+      border-radius: 9999px;
+      width: 120px; /* Set a fixed size for the profile picture */
+      height: 120px;
+      object-fit: cover; /* Ensure the image covers the area without distortion */
+      border: 4px solid white; /* Added for better visibility against dark backgrounds */
+    }
+    .rating-stars {
+      color: #fbbf24; /* amber-400 */
+    }
+    .hover-scale:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+    .container {
+      max-width: 1280px; /* Equivalent to max-w-7xl in TailwindCSS */
+      margin: 0 auto;
+      padding: 16px;
+    }
+    /* Modal styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+    }
+    .modal-content, #caption {
+      animation-name: zoom;
+      animation-duration: 0.6s;
+    }
+    @keyframes zoom {
+      from {transform:scale(0)}
+      to {transform:scale(1)}
+    }
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Profile Header Section -->
+  <header class="profile-header-bg relative">
+    <div class="container pt-20 flex items-center">
+      <!-- Profile Picture added here -->
+      <img id="profilePic" src="https://via.placeholder.com/120/CCCCCC/FFFFFF?text=Profile" alt="Profile Picture" class="profile-pic mr-4" />
+   
+      <div class="ml-8 text-white"> <!-- Changed text-black to text-white for better contrast on default background -->
+        <h1 class="text-3xl font-semibold" id="fullName" style="color: black;">JOHN DOE</h1>
+        <p class="text-lg font-medium">Caregiver</p>
+        <ul class="mt-2 flex flex-wrap text-sm space-x-4 text-gray-200"> <!-- Adjusted text color -->
+          <li style="color: black;">Address:  <span  id="address" style="color: black;"> Your Address</span></li>
+          <li style="color: black;">Zipcode:   <span id="zipcode" style="color: black;"> 12345</span></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Personal Information Section -->
+  <section class="container mt-12">
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <h2 class="text-2xl font-semibold text-gray-700">Personal Information</h2>
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label class="text-sm font-medium text-gray-600">First Name</label>
+          <input type="text" id="fname" class="mt-2 p-2 w-full border border-gray-300 rounded" placeholder="John" readonly/>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-600">Last Name</label>
+          <input type="text" id="lname" class="mt-2 p-2 w-full border border-gray-300 rounded" placeholder="Smith" readonly/>
+        </div>
+        <div class="sm:col-span-2"> <!-- Make work experience take full width on small screens and up -->
+          <label class="text-sm font-medium text-gray-600">Work Experience</label>
+          <textarea id="workExp" class="mt-2 p-2 w-full border border-gray-300 rounded" placeholder="Describe your work experience" rows="4" readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information Section -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
+      <h2 class="text-2xl font-semibold text-gray-700">Contact Information</h2>
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label class="text-sm font-medium text-gray-600">Phone Number</label>
+          <input type="tel"  id="phone" class="mt-2 p-2 w-full border border-gray-300 rounded" placeholder="(123) 456-7890"  readonly/>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-600">Email Address</label>
+          <input type="email" id="username" class="mt-2 p-2 w-full border border-gray-300 rounded" placeholder="email@example.com" readonly/> <!-- Added readonly here as well -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents Section -->
+   <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
+      <h2 class="text-2xl font-semibold text-gray-700">Documents</h2>
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Resume Image -->
+        <div>
+          <label class="text-sm font-medium text-gray-600">Valid ID</label>
+          <img id="valid" src="https://via.placeholder.com/150/F0F0F0/808080?text=Resume" alt="Resume Document" class="mt-2 rounded-lg shadow-md max-h-48 w-full object-cover cursor-pointer hover-scale" onclick="openModal(this)"/>
+        </div>
+        <!-- Valid ID Image -->
+        <div>
+          <label class="text-sm font-medium text-gray-600">Xray</label>
+          <img id="xray" src="https://via.placeholder.com/150/F0F0F0/808080?text=Valid ID" alt="Valid ID Document" class="mt-2 rounded-lg shadow-md max-h-48 w-full object-cover cursor-pointer hover-scale" onclick="openModal(this)"/>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-600">Fingerprints</label>
+          <img id="FingerPrints" src="https://via.placeholder.com/150/F0F0F0/808080?text=Valid ID" alt="Valid ID Document" class="mt-2 rounded-lg shadow-md max-h-48 w-full object-cover cursor-pointer hover-scale" onclick="openModal(this)"/>
+        </div>
+        <!-- Add more document images here if needed -->
+      </div>
+    </div>
+
+    <!-- Availability Section -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
+      <h2 class="text-2xl font-semibold text-gray-700">Availability</h2>
+      <div class="mt-4">
+        <label class="text-sm font-medium text-gray-600">Availability</label>
+        <input type="text" class="mt-2 p-2 w-full border border-gray-300 rounded" placeholder="Weekdays, 9 AM - 5 PM"  id="availability" readonly/>
+      </div>
+    </div>
+    <!-- Preferred Schedule -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mt-8 mb-12"> <!-- Added mb-12 for some bottom spacing -->
+      <h2 class="text-2xl font-semibold text-gray-700">Preferred Schedule</h2>
+      <div class="mt-4">
+        <label class="text-sm font-medium text-gray-600">Preferred Schedule</label>
+        <input type="text" class="mt-2 p-2 w-full border border-gray-300 rounded" placeholder="Weekdays, 9 AM - 5 PM" id="prefered" readonly/>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="img01">
+    <div id="caption"></div>
+  </div>
+
+</body>
+ <script>
+    let clientid = "";
+
+    window.onmessage = (event) => {
+      const data = event.data;
+      if (!data) return;
+ console.log(data.user + "sasdaa");
+ document.getElementById("fname").value = data.fName
+  document.getElementById("lname").value = data.lName
+      document.getElementById("username").value = data.user
+
+  document.getElementById("workExp").value = data.workExp
+  document.getElementById("phone").value = data.phones
+  document.getElementById("availability").value = data.availability
+  document.getElementById("prefered").value = data.prefered
+  document.getElementById("fullName").textContent = data.fullName
+   document.getElementById("address").textContent = data.Address
+    document.getElementById("zipcode").textContent = data.ZIP
+    document.getElementById("profilePic").src = data.profilePicUrl;
+     document.getElementById("xray").src = data.xrayPic;
+      document.getElementById("valid").src = data.validPic;
+        document.getElementById("FingerPrints").src = data.fingerPrint;
+      
+    };
+
+    function openModal(imgElement) {
+      const modal = document.getElementById("myModal");
+      const modalImg = document.getElementById("img01");
+      const captionText = document.getElementById("caption");
+
+      modal.style.display = "flex"; // Changed from "block" to "flex" to center content
+      modalImg.src = imgElement.src;
+      captionText.textContent = imgElement.alt; // Use textContent
+    }
+
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+    }
+
+  </script>
+</html>

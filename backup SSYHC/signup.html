@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Role Selection Tabs</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fffdf9;
+    }
+
+    /* Pure line style tabs */
+    .nav-tabs {
+      border-bottom: 2px solid #ddd;
+    }
+    .nav-tabs .nav-link {
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: #555;
+      font-weight: bold;
+      margin-right: 15px;
+      padding: 10px 15px;
+    }
+    .nav-tabs .nav-link:hover {
+      color: #ffb400;
+      border-bottom-color: #ffb40033;
+    }
+    .nav-tabs .nav-link.active {
+      color: #ffb400;
+      border-bottom: 3px solid #ffb400;
+      background: transparent;
+    }
+
+    /* Card styling */
+    .role-card {
+      background: #fef8e7;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      padding: 20px;
+    }
+    .role-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .role-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #ffb400;
+    }
+    .role-desc {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .arrow-btn {
+      background: #ffb400;
+      color: white;
+      border-radius: 50%;
+      padding: 8px 12px;
+      font-weight: bold;
+      display: inline-block;
+      transition: background 0.3s ease;
+    }
+    .arrow-btn:hover {
+      background: #ff9500;
+    }
+
+
+    #per-info .btn-submit {
+  background-color: #ffb400;
+  color: white;
+  font-weight: bold;
+  padding: 10px 30px;
+  border-radius: 30px;
+  transition: 0.3s ease;
+  border: none;
+}
+
+#per-info .btn-submit:hover {
+  background-color: #ffa000;
+}
+ .form-control, .form-select {
+      border-radius: 20px;
+      border: 1px solid green;
+    }
+
+    .form-label {
+      font-weight: bold;
+    }
+
+    .btn-submit {
+      background-color: #92f8b0;
+      color: #000;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 25px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-4">
+  <!-- Line-style tabs -->
+  <ul class="nav nav-tabs" id="roleTabs" role="tablist">
+     <li class="nav-item" role="presentation">
+      <button class="nav-link  active" id="house-tab" data-bs-toggle="tab" data-bs-target="#house" type="button" role="tab">Job role</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="care-tab" data-bs-toggle="tab" data-bs-target="#care" type="button" role="tab">Care Services</button>
+    </li>
+   
+       <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#per-info" type="button" role="tab">Personal-Information</button>
+    </li>
+       <li class="nav-item" role="presentation">
+      <button class="nav-link" id="house-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab">Schedule</button>
+    </li>
+  </ul>
+
+  <div class="tab-content mt-4">
+    <!-- Care Services Tab -->
+    <div class="tab-pane fade " id="care" role="tabpanel">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="role-card text-center" onclick="switchTab('#per-info','Senior Caregiver')">
+            <img src="https://static.wixstatic.com/media/e72759_e58bbaaa1ecc4970b4f9d765085899b8~mv2.png" width="80">
+            <div class="role-title">Senior Caregiver</div>
+            <div class="role-desc">Compassionate support for elderly loved ones</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#per-info','Child Caregiver')">
+            <img src="https://static.wixstatic.com/media/e72759_c12f1fa312384879b08a5173b75a272b~mv2.png" width="80">
+            <div class="role-title">Child Caregiver</div>
+            <div class="role-desc">Safe and nurturing assistance for children</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#per-info','Pet Caregiver')">
+            <img src="https://static.wixstatic.com/media/e72759_4a24e1cd9acd4296aad8155f568949c2~mv2.png" width="80">
+            <div class="role-title">Pet Caregiver</div>
+            <div class="role-desc">Loving care for your furry companions</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+         <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#per-info','Housekeeping')">
+            <img src="https://static.wixstatic.com/media/e72759_c0e1abae72e5438184169dccf9d2c804~mv2.png" width="80">
+            <div class="role-title">Housekeeping</div>
+            <div class="role-desc">Reliable household cleaning and maintenance</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+
+           <div class="col-md-4">
+          <div class="role-card text-center"  onclick="switchTab('#per-info','Tutoring')">
+            <img src="https://static.wixstatic.com/media/e72759_e625530ce7134f799f8e44d4f3924a58~mv2.png" width="80">
+            <div class="role-title">Tutoring</div>
+            <div class="role-desc">Personalized help for students of all ages</div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Household Services Tab -->
+    <div class="tab-pane fade show active" id="house" role="tabpanel" >
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="role-card text-center" onclick="goToCareservices('#care')">
+            <img src="https://static.wixstatic.com/media/e72759_e58bbaaa1ecc4970b4f9d765085899b8~mv2.png" width="80">
+            <div class="role-title">Caregiver</div>
+            <div class="role-desc"></div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="role-card text-center" onclick="clientBtn('#per-info')">
+            <img src="https://static.wixstatic.com/media/e72759_e58bbaaa1ecc4970b4f9d765085899b8~mv2.png" width="80">
+            <div class="role-title">Client</div>
+            <div class="role-desc"></div>
+            <div class="mt-3">
+              <span class="arrow-btn">&#10132;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- schdedule  -->
+    <!-- Schedule Tab -->
+<div class="tab-pane fade" id="schedule" role="tabpanel">
+  <div class="row g-4">
+    <h4 id="PreferredText">Preferred Schedule</h4>
+    <!-- Preferred Schedule Checkboxes -->
+    <div class="mb-3" id="PreferredContent">
+      <label class="form-label">Select Preferred Schedule *</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="midShift" value="Mid Shift">
+        <label class="form-check-label" for="midShift">Mid Shift</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="nightShift" value="Night Shift">
+        <label class="form-check-label" for="nightShift">Night Shift</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="dayShift" value="Day Shift">
+        <label class="form-check-label" for="dayShift">Day Shift</label>
+      </div>
+    </div>
+
+    <h4 id="AvailabilityText">Availability Schedule</h4>
+    <!-- Availability Schedule Checkboxes -->
+    <div class="mb-3" id="AvailabilityContainer">
+      <label class="form-label">Select Days Available *</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="monday" value="Monday">
+        <label class="form-check-label" for="monday">Monday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="tuesday" value="Tuesday">
+        <label class="form-check-label" for="tuesday">Tuesday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="wednesday" value="Wednesday">
+        <label class="form-check-label" for="wednesday">Wednesday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="thursday" value="Thursday">
+        <label class="form-check-label" for="thursday">Thursday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="friday" value="Friday">
+        <label class="form-check-label" for="friday">Friday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="saturday" value="Saturday">
+        <label class="form-check-label" for="saturday">Saturday</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="sunday" value="Sunday">
+        <label class="form-check-label" for="sunday">Sunday</label>
+      </div>
+    </div>
+
+    <!-- Valid ID -->
+    <!-- <div class="mb-3 d-flex align-items-center">
+      <div class="image-placeholder" id="validIdPreview"></div>
+      <label class="form-label mb-0 me-2">Valid ID *</label>
+      <input type="file" id="valid-id" accept="image/*">
+      <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('valid-id').click()">Change File</button>
+    </div> -->
+
+    <!-- Formal Picture -->
+    <!-- <div class="mb-3 d-flex align-items-center">
+      <div class="image-placeholder" id="formalPicPreview"></div>
+      <label class="form-label mb-0 me-2">Formal Picture *</label>
+      <input type="file" id="formal-picture" accept="image/*">
+      <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('formal-picture').click()">Change File</button>
+    </div> -->
+       <div class="col-12" style="margin-top: 200px;">
+          <button type="button" class="btn btn-submit mt-3" onclick="savedToCMS()" >Submit</button>
+        </div>
+  </div>
+</div>
+
+
+<!-- PERSONAL INFO -->
+    <div class="tab-pane fade" id="per-info" role="tabpanel">
+      <div class="text-center mb-4">
+  <img src="sh.jpg" alt="Senior Star Homecare" style="max-width: 250px;">
+</div>
+
+      <div class="row g-4">
+    
+ <h4 class="mb-4">Personal Information</h4>
+      <form class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">First name *</label>
+          <input type="text" class="form-control" placeholder="First name" id="fname">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Last name *</label>
+          <input type="text" class="form-control" placeholder="Last name" id="lname">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Middle name *</label>
+          <input type="text" class="form-control" placeholder="Middle name" id="mname">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Suffix *</label>
+          <select class="form-select" id="suffix">
+            <option selected disabled>Suffix</option>
+            <option value="Jr">Jr.</option>
+            <option value="Sr">Sr.</option>
+            <option value="II">II</option>
+            <option value="III">III</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Gender</label>
+          <select class="form-select" id="gender">
+            <option selected disabled>Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          
+     
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">US Address *</label>
+          <input type="text" class="form-control" placeholder="US Address" id="usaddress">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Zip code *</label>
+          <input type="text" class="form-control" placeholder="Zip code" id="zipcode">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Work experience *</label>
+          <input type="text" class="form-control" placeholder="Work experience" id="experience">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Character experience *</label>
+          <input type="text" class="form-control" placeholder="Character experience" id="reference">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Phone number *</label>
+          <input type="text" class="form-control" placeholder="Phone number" id="phone" id="phone">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Email Address *</label>
+          <input type="email" class="form-control" placeholder="Email Address" id="email">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Password *</label>
+          <input type="password" class="form-control" placeholder="Password" id="pwd">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Talents *</label>
+          <input type="text" class="form-control" placeholder="Talents" id="talents" >
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Skills & Expertise *</label>
+          <input type="text" class="form-control" placeholder="Skills & Expertise" id="skills">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Home care aide HCA number *</label>
+          <input type="text" class="form-control" placeholder="Home care aide HCA number" id="hca">
+        </div>
+
+        <div class="col-12">
+          <button type="button" class="btn btn-submit mt-3" onclick="goToSchedule('#schedule')">Submit</button>
+        </div>
+      </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  let role = '';
+  let userRole = '';
+  function previewImage(input, previewId) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+
+  document.getElementById('valid-id').addEventListener('change', function() {
+    previewImage(this, 'validIdPreview');
+  });
+
+  document.getElementById('formal-picture').addEventListener('change', function() {
+    previewImage(this, 'formalPicPreview');
+  });
+    function switchTab(tabId,userRoles) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+
+      
+    userRole = userRoles
+  }
+   function goToCareservices(tabId) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+   role = "caregiver";
+  }
+    function goToSchedule(tabId) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+     window.parent.postMessage({ action: "showButton" }, "*");
+  }
+   function clientBtn(tabId) {
+    const tabTrigger = document.querySelector(`[data-bs-target="${tabId}"]`);
+  
+      const tab = new bootstrap.Tab(tabTrigger);
+      tab.show();
+      document.getElementById("experience").readOnly = true
+      document.getElementById("reference").readOnly = true
+       document.getElementById("talents").readOnly = true
+      document.getElementById("skills").readOnly = true
+      document.getElementById("hca").readOnly = true
+      document.getElementById("AvailabilityContainer").style.display = "none"
+      document.getElementById("AvailabilityText").style.display = "none"
+      document.getElementById("PreferredContent").style.display = "none"
+      document.getElementById("PreferredText").style.display = "none"
+  }
+  function savedToCMS(){
+      let items = [];
+    let fname = document.getElementById("fname").value; // OK
+let lname = document.getElementById("lname").value; // OK
+let mname = document.getElementById("mname").value; //
+let suffix = document.getElementById("suffix").value; //
+let gender = document.getElementById("gender").value; //
+let usaddress = document.getElementById("usaddress").value; // OK
+let zipcode = document.getElementById("zipcode").value; // OK
+let experience = document.getElementById("experience").value; //
+let reference = document.getElementById("reference").value; //
+let phone = document.getElementById("phone").value; // ok
+let email = document.getElementById("email").value; // OK
+let pwd = document.getElementById("pwd").value; // OK
+let talents = document.getElementById("talents").value;
+let skills = document.getElementById("skills").value;
+let hca = document.getElementById("hca").value;
+// let formalpicture = document.getElementById("formal-picture");
+// // let validid = document.getElementById("valid-id");
+// // let formalFile = formalpicture.files[0]; // 👈 this is the real file object
+// // let validFile = validid.files[0];
+
+const checked = document.querySelectorAll('#AvailabilityContainer input[type="checkbox"]:checked');
+const checkeds = document.querySelectorAll('#PreferredContent input[type="checkbox"]:checked');
+    const checkedvalues = Array.from(checked).map(cb => cb.value);
+     const checkedsvalues = Array.from(checkeds).map(cb => cb.value);
+    console.log(role,userRole);
+    console.log(fname,lname,mname,suffix,gender,usaddress,zipcode,experience,reference,phone,email,pwd,talents,skills,hca);
+    console.log(checkedvalues);
+    console.log(checkedsvalues);
+     items.push({ role, userRole, fname,lname,mname,suffix,gender,usaddress,zipcode,experience,reference,phone,email,pwd,talents,skills,hca,checkedvalues,checkedsvalues});
+      window.parent.postMessage({ action: "create", data: {role, userRole, fname,lname,mname,suffix,gender,usaddress,zipcode,experience,reference,phone,email,pwd,talents,skills,hca,checkedvalues,checkedsvalues } }, "*");
+// formal-picture
+// valid-id
+
+
+  }
+    window.addEventListener("message", (event) => {
+      if (event.data.action === "load") {
+        items = event.data.items;
+        renderTable();
+      }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

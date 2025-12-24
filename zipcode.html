@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>US ZIP Code Lookup</title>
+</head>
+<body>
+  <h2>Enter a US ZIP Code</h2>
+  <input type="text" id="zipcode" placeholder="e.g. 90210" maxlength="5" />
+  <button onclick="lookupZip()">Lookup Address</button>
+
+  <h3>Address Information:</h3>
+  <div id="address"></div>
+
+  <script>
+    function lookupZip() {
+      const zip = document.getElementById('zipcode').value.trim();
+      const addressDiv = document.getElementById('address');
+      addressDiv.innerHTML = '';
+
+      if (!/^\d{5}$/.test(zip)) {
+        addressDiv.innerHTML = 'Please enter a valid 5-digit US ZIP code.';
+        return;
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zip}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+          addressDiv.innerHTML = `
+            <strong>Place Name:</strong> ${place['place name']}<br/>
+            <strong>State:</strong> ${place['state']}<br/>
+            <strong>State Abbreviation:</strong> ${place['state abbreviation']}<br/>
+            <strong>Latitude:</strong> ${place['latitude']}<br/>
+            <strong>Longitude:</strong> ${place['longitude']}
+          `;
+        })
+        .catch(error => {
+          addressDiv.innerHTML = error.message;
+        });
+    }
+  </script>
+</body>
+</html>

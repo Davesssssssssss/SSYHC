@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+  <title>Senior Star Homecare Login</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SweetAlert2 for Modern Alerts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Reset and Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #fffaf0 0%, #fff7e1 100%);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Safe area insets for modern mobile devices */
+    @supports (padding: max(0px)) {
+      body {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+      }
+    }
+
+    /* Main Login Container - Made more compact */
+    .login-container {
+      background: white;
+      width: min(100%, 420px); /* Reduced from 450px */
+      padding: clamp(1.25rem, 4vw, 2rem); /* Reduced padding */
+      border-radius: clamp(0.875rem, 2.5vw, 1rem); /* Slightly smaller radius */
+      box-shadow: 0 8px 30px rgba(254, 183, 7, 0.15); /* Softer shadow */
+      border: 1px solid rgba(254, 193, 7, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin: -40px; /* Reduced margin */
+    }
+
+    .login-container:hover {
+      box-shadow: 0 12px 40px rgba(254, 183, 7, 0.2);
+    }
+
+    /* Logo - Slightly smaller */
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: clamp(1.25rem, 3.5vw, 1.75rem);
+    }
+
+    .logo img {
+      width: min(180px, 55vw); /* Reduced from 200px */
+      height: auto;
+      max-width: 100%;
+      transition: transform 0.3s;
+    }
+    
+    .logo img:hover {
+      transform: scale(1.02);
+    }
+
+    /* Senior Instructions - More compact */
+    .senior-instructions {
+      background-color: #fffbeb;
+      border-radius: clamp(0.75rem, 2vw, 1rem);
+      padding: clamp(0.875rem, 2.5vw, 1rem); /* Reduced padding */
+      margin-bottom: clamp(1rem, 2.5vw, 1.25rem);
+      border-left: 4px solid #fec107;
+      font-size: clamp(0.85rem, 2.2vw, 0.95rem); /* Slightly smaller */
+      color: #854d0e;
+    }
+
+    .instructions-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+    }
+
+    .instruction-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .instruction-icon {
+      color: #f59e0b;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    /* Form Styles - More compact */
+    .input-group {
+      margin-bottom: clamp(1rem, 2.5vw, 1.25rem); /* Reduced margin */
+      position: relative;
+    }
+
+    .input-label {
+      font-weight: 600;
+      color: #374151;
+      font-size: clamp(0.9rem, 2.5vw, 0.95rem); /* Slightly smaller */
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .input-field {
+      background: #fffdf7;
+      border: 2px solid #e5e7eb;
+      border-radius: clamp(0.5rem, 2vw, 0.75rem);
+      padding: clamp(0.65rem, 2vw, 0.875rem); /* Reduced padding */
+      font-size: clamp(0.95rem, 3vw, 1.05rem); /* Slightly smaller */
+      width: 100%;
+      transition: all 0.2s ease;
+      color: #1f2937;
+      padding-right: clamp(2.5rem, 6vw, 3rem);
+      min-height: 46px; /* Slightly smaller */
+    }
+
+    .input-field:focus {
+      border-color: #fec107;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(254, 193, 7, 0.1);
+      outline: none;
+    }
+
+    /* Password Toggle */
+    .password-toggle {
+      position: absolute;
+      right: max(8px, 1vw);
+      bottom: 50%;
+      transform: translateY(50%);
+      background: transparent;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      width: max(34px, 7vw); /* Slightly smaller */
+      height: max(34px, 7vw); /* Slightly smaller */
+      min-width: 34px;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .password-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: #374151;
+    }
+
+    .password-toggle:active {
+      transform: translateY(50%) scale(0.95);
+    }
+
+    /* Login Button - More compact */
+    .btn-login {
+      background: #fec107;
+      width: 100%;
+      padding: clamp(0.75rem, 2vw, 0.875rem); /* Reduced padding */
+      font-weight: 700;
+      border-radius: clamp(0.5rem, 2vw, 0.75rem);
+      border: none;
+      font-size: clamp(0.95rem, 3vw, 1.05rem); /* Slightly smaller */
+      color: #1f2937;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(254, 193, 7, 0.3);
+      margin-top: 0.25rem; /* Reduced margin */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      letter-spacing: 0.5px;
+      min-height: 46px; /* Slightly smaller */
+    }
+
+    .btn-login:hover:not(:disabled) {
+      background-color: #f59e0b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px -1px rgba(254, 193, 7, 0.4);
+    }
+
+    .btn-login:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    
+    .btn-login:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      background-color: #fbbf24;
+    }
+
+    /* Forgot Password - More compact */
+    .forgot-password {
+      text-align: center;
+      margin-top: clamp(0.75rem, 2.5vw, 1rem); /* Reduced margin */
+      font-size: clamp(0.9rem, 2.5vw, 0.95rem); /* Slightly smaller */
+      color: #854d0e;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+      padding: clamp(0.4rem, 1.2vw, 0.6rem); /* Reduced padding */
+      border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
+      display: block;
+      min-height: 40px; /* Slightly smaller */
+      text-decoration: none;
+    }
+
+    .forgot-password:hover, .forgot-password:focus {
+      background-color: rgba(254, 193, 7, 0.1);
+      color: #b45309;
+      text-decoration: underline;
+      outline: none;
+    }
+
+    /* Help Text - Slightly smaller */
+    .help-text {
+      font-size: clamp(0.75rem, 2.2vw, 0.85rem); /* Smaller */
+      color: #6b7280;
+      margin-top: 0.3rem;
+      display: block;
+    }
+
+    /* Action Links Container */
+    .action-links {
+      margin-top: 1.25rem; /* Reduced from 1.5rem */
+    }
+
+    /* Accessibility */
+    *:focus-visible {
+      outline: 3px solid #fec107;
+      outline-offset: 2px;
+    }
+
+    /* SweetAlert Overrides */
+    div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+      background-color: #fec107 !important;
+      color: #1f2937 !important;
+      font-weight: 600;
+      font-size: clamp(0.95rem, 3vw, 1.05rem) !important; /* Slightly smaller */
+      padding: clamp(0.6rem, 1.8vw, 0.9rem) clamp(1.25rem, 3.5vw, 1.75rem) !important; /* Reduced padding */
+      min-height: 42px; /* Slightly smaller */
+    }
+    
+    div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm:focus {
+      box-shadow: 0 0 0 3px rgba(254, 193, 7, 0.5) !important;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 480px) {
+      body {
+        padding: 0.5rem;
+        font-size: 15px;
+      }
+      
+      .login-container {
+        padding: 1rem;
+        border-radius: 0.75rem;
+        margin: -30px;
+      }
+      
+      .btn-login,
+      .input-field,
+      .forgot-password {
+        min-height: 44px;
+      }
+    }
+
+    /* Adjust for very small devices (phones in portrait) */
+    @media (max-width: 360px) {
+      .login-container {
+        width: min(100%, 380px);
+        padding: 1rem;
+        margin: -25px;
+      }
+      
+      .logo img {
+        width: min(160px, 50vw);
+      }
+      
+      .btn-login,
+      .input-field,
+      .forgot-password {
+        min-height: 42px;
+      }
+      
+      .password-toggle {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+      }
+    }
+
+    /* Adjust for extremely small devices */
+    @media (max-width: 320px) {
+      .login-container {
+        width: min(100%, 340px);
+        padding: 0.875rem;
+        margin: -20px;
+      }
+      
+      .logo img {
+        width: min(140px, 45vw);
+      }
+      
+      body {
+        padding: 0.5rem;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-height: 600px) {
+      body {
+        align-items: flex-start;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+      
+      .logo {
+        margin-bottom: 1rem;
+      }
+      
+      .senior-instructions {
+        margin-bottom: 1rem;
+      }
+    }
+
+    /* Maintain proper spacing on taller mobile devices */
+    @media (max-height: 700px) and (min-width: 480px) {
+      .login-container {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      .input-field {
+        border-width: 3px;
+      }
+      
+      .btn-login {
+        border: 2px solid #000;
+      }
+    }
+
+    /* Reduce motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Adjust SweetAlert for very small screens */
+    @media (max-width: 360px) {
+      div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+        padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(1rem, 3vw, 1.5rem) !important;
+        font-size: clamp(0.9rem, 3vw, 1rem) !important;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      .login-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+      
+      .btn-login,
+      .password-toggle {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="login-container">
+    <div class="logo">
+      <img src="https://static.wixstatic.com/media/7339e9_9a3813e30d4d413995b336f3d9aa444f~mv2.jpg" 
+           alt="Senior Star Homecare Logo" 
+           onerror="this.onerror=null;this.src='https://via.placeholder.com/230x80?text=Senior+Star+Homecare';"
+           loading="eager"/>
+    </div>
+
+    <form id="loginForm" autocomplete="off" novalidate>
+      <div class="input-group">
+        <label for="email" class="input-label">
+          <i class="fas fa-envelope" aria-hidden="true" style="margin-right: 0.5rem;"></i>
+          Email Address
+        </label>
+        <input type="email" id="email" class="input-field" 
+               placeholder="name@example.com" 
+               required 
+               autocomplete="email"
+               aria-describedby="emailHelp" />
+        <span id="emailHelp" class="help-text">
+          Example: yourname@example.com
+        </span>
+      </div>
+
+      <div class="input-group">
+        <label for="password" class="input-label">
+          <i class="fas fa-lock" aria-hidden="true" style="margin-right: 0.5rem;"></i>
+          Password
+        </label>
+        <div style="position: relative;">
+          <input type="password" id="password" class="input-field" 
+                 placeholder="••••••••" 
+                 required 
+                 autocomplete="current-password"
+                 aria-describedby="passwordHelp" />
+          <button type="button" class="password-toggle" id="togglePassword" 
+                  aria-label="Show password" 
+                  aria-describedby="passwordHelp"
+                  aria-controls="password">
+            <i class="fas fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+        <span id="passwordHelp" class="help-text">
+          Click the eye icon to show/hide password
+        </span>
+      </div>
+
+      <button type="submit" class="btn-login" id="btnLogin">
+        <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+        <span>Log In</span>
+      </button>
+    </form>
+
+    <!-- Action Links Container -->
+    <div class="action-links">
+      <div class="forgot-password" id="btnForgots" role="button" tabindex="0" 
+           aria-label="Forgot your password? Click for help" onclick="redirectToRecovery()">
+        <i class="fas fa-question-circle" aria-hidden="true" style="margin-right: 0.5rem;"></i>
+        Forgot your password?
+      </div>
+      
+      <a href="#" class="forgot-password" id="btnCreateAccount" 
+         aria-label="Create new account" style="margin-top: 0.5rem; display: block;" onclick="redirectToRegister()">
+        <i class="fas fa-user-plus" aria-hidden="true" style="margin-right: 0.5rem;"></i>
+        Create New Account
+      </a>
+    </div>
+  </main>
+
+  <script>
+    // DOM Elements
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("btnLogin");
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const btnText = loginBtn.querySelector("span");
+    const forgotPasswordBtn = document.getElementById("btnForgot");
+    const createAccountBtn = document.getElementById("btnCreateAccount");
+
+    // Check if mobile device
+    const isMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+             (window.innerWidth <= 768 && 'ontouchstart' in window);
+    };
+
+    // Function to adjust container margin based on screen size
+    function adjustContainerMargin() {
+      const container = document.querySelector('.login-container');
+      const screenHeight = window.innerHeight;
+      const containerHeight = container.offsetHeight;
+      
+      if (screenHeight < 600 && containerHeight < 500) {
+        // On very short screens, reduce vertical margin
+        container.style.margin = '0 auto';
+      } else {
+        // Restore original margins for larger screens
+        container.style.margin = 'auto';
+      }
+    }
+
+    // 1. Toggle password visibility
+    const togglePasswordVisibility = () => {
+      const type = passwordInput.getAttribute("type") === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      
+      // Toggle eye icon
+      const icon = togglePasswordBtn.querySelector('i');
+      if (type === 'text') {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+        togglePasswordBtn.setAttribute('aria-label', 'Hide password');
+      } else {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+        togglePasswordBtn.setAttribute('aria-label', 'Show password');
+      }
+      
+      // Focus back on password input for better UX
+      passwordInput.focus();
+    };
+
+    togglePasswordBtn.addEventListener("click", togglePasswordVisibility);
+    
+    // Also allow Enter key on toggle button
+    togglePasswordBtn.addEventListener("keydown", (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        togglePasswordVisibility();
+      }
+    });
+
+    // 2. Handle Form Submission
+    const handleLoginSubmit = (e) => {
+        e.preventDefault();
+
+        const username = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        // Basic validation
+        if (!username || !password) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Information',
+                text: 'Please enter both email and password.',
+                confirmButtonText: 'Okay',
+                background: '#fff',
+                color: '#1f2937',
+                width: isMobile() ? '90%' : 'auto'
+            });
+            return;
+        }
+
+        // Email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(username)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Email',
+                text: 'Please enter a valid email address like: name@example.com',
+                confirmButtonText: 'Okay',
+                background: '#fff',
+                color: '#1f2937',
+                width: isMobile() ? '90%' : 'auto'
+            });
+            emailInput.focus();
+            return;
+        }
+
+        // Show loading state
+        setLoading(true);
+
+        // Send login request to Wix parent window
+        window.parent.postMessage({
+            action: "login",
+            data: { username, password }
+        }, "*");
+    };
+
+    loginForm.addEventListener("submit", handleLoginSubmit);
+
+    // 3. Handle Forgot Password
+    const handleForgotPassword = () => {
+        Swal.fire({
+            title: 'Need Help with Password?',
+            html: `
+              <div style="text-align: left; font-size: ${isMobile() ? '1rem' : '1.1rem'}">
+                <p>To reset your password:</p>
+                <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                  <li>Call our support team at: <strong>1-800-123-4567</strong></li>
+                  <li>Email us at: <strong>support@seniorstarhomecare.com</strong></li>
+                  <li>Contact your administrator directly</li>
+                </ol>
+                <p style="margin-top: 1rem;">We'll help you reset your password quickly!</p>
+              </div>
+            `,
+            icon: 'info',
+            confirmButtonText: 'Got it',
+            background: '#fff',
+            color: '#1f2937',
+            width: isMobile() ? '95%' : '500px'
+        });
+    };
+
+    forgotPasswordBtn.addEventListener("click", handleForgotPassword);
+    forgotPasswordBtn.addEventListener("keydown", (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleForgotPassword();
+        }
+    });
+
+    // 4. Handle Create New Account - Simple link only, no modal
+    createAccountBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        // Just send a message to parent window without showing modal
+        window.parent.postMessage({
+            action: "createAccount"
+        }, "*");
+    });
+
+    // 5. Listen for response from Wix
+    window.addEventListener("message", (event) => {
+        if (event.data && event.data.action === "loginResult") {
+            setLoading(false);
+
+            if (event.data.success) {
+                const loggedUser = event.data.user;
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Welcome Back!',
+                    text: `Login successful, ${loggedUser.fullName || 'User'}`,
+                    timer: 2500,
+                    showConfirmButton: false,
+                    backdrop: `rgba(0,0,0,0.4)`,
+                    background: '#fff',
+                    color: '#1f2937',
+                    width: isMobile() ? '90%' : 'auto'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: event.data.message || 'Incorrect email or password. Please try again.',
+                    confirmButtonText: 'Try Again',
+                    background: '#fff',
+                    color: '#1f2937',
+                    width: isMobile() ? '90%' : 'auto'
+                });
+                
+                // Reset password field for security
+                passwordInput.value = '';
+                passwordInput.setAttribute('type', 'password');
+                const icon = togglePasswordBtn.querySelector('i');
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                togglePasswordBtn.setAttribute('aria-label', 'Show password');
+                
+                emailInput.focus();
+            }
+        }
+    });
+
+    // Helper function to toggle button loading state
+    function setLoading(isLoading) {
+        if (isLoading) {
+            loginBtn.disabled = true;
+            btnText.textContent = "Signing in...";
+            loginBtn.setAttribute('aria-busy', 'true');
+        } else {
+            loginBtn.disabled = false;
+            btnText.textContent = "Log In";
+            loginBtn.setAttribute('aria-busy', 'false');
+        }
+    }
+
+    // Allow form submission with Enter key
+    loginForm.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !loginBtn.disabled) {
+            e.preventDefault();
+            handleLoginSubmit(e);
+        }
+    });
+
+    // Initialize on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        // Focus email field on page load
+        emailInput.focus();
+        
+        // Adjust container margin
+        adjustContainerMargin();
+        
+        // Mobile-specific optimizations
+        if (isMobile()) {
+            // Ensure touch-friendly sizes
+            document.querySelectorAll('input, button, .forgot-password').forEach(el => {
+                el.style.minHeight = '44px';
+            });
+            
+            // Prevent auto-zoom on iOS when focusing inputs
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                document.addEventListener('focusin', (e) => {
+                    if (e.target.matches('input')) {
+                        document.querySelector('meta[name="viewport"]')
+                            .setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1');
+                    }
+                });
+                
+                document.addEventListener('focusout', (e) => {
+                    if (e.target.matches('input')) {
+                        setTimeout(() => {
+                            document.querySelector('meta[name="viewport"]')
+                                .setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5');
+                        }, 100);
+                    }
+                });
+            }
+            
+            // Add touch feedback
+            document.querySelectorAll('button, .forgot-password').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                el.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        }
+        
+        // Add ARIA live region for screen readers
+        const liveRegion = document.createElement('div');
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.style.position = 'absolute';
+        liveRegion.style.width = '1px';
+        liveRegion.style.height = '1px';
+        liveRegion.style.margin = '-1px';
+        liveRegion.style.overflow = 'hidden';
+        liveRegion.style.clip = 'rect(0, 0, 0, 0)';
+        document.body.appendChild(liveRegion);
+    });
+
+    // Error handling for image loading
+    const logoImg = document.querySelector('.logo img');
+    logoImg.addEventListener('error', function() {
+        this.src = 'https://via.placeholder.com/200x70/FEC107/1F2937?text=Senior+Star+Homecare';
+        this.alt = 'Senior Star Homecare Logo - Placeholder';
+    });
+
+    // Handle iframe resizing for Wix
+    function updateIframeHeight() {
+        const height = document.documentElement.scrollHeight;
+        window.parent.postMessage({
+            action: "resizeIframe",
+            height: height
+        }, "*");
+    }
+
+    // Update iframe height on load and resize
+    window.addEventListener('load', () => {
+        updateIframeHeight();
+        adjustContainerMargin();
+    });
+    
+    window.addEventListener('resize', () => {
+        updateIframeHeight();
+        adjustContainerMargin();
+    });
+
+    // Debounce resize events for performance
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            updateIframeHeight();
+            adjustContainerMargin();
+        }, 250);
+    });
+    function  redirectToRegister(){
+           window.parent.postMessage('REDIRECT_TO_REGISTER', '*');
+    }
+    function redirectToRecovery(){
+        window.parent.postMessage('REDIRECT_TO_RECOVERY', '*');
+    }
+  </script>
+</body>
+</html>

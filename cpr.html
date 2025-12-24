@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Client Portal - SeniorStar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Lora:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FBC02D; --primary-bright: #FDD835; --primary-light: #FFF9C4;
+            --primary-dark: #F57F17; --accent: #2E7D32; --success: #4CAF50;
+            --warning: #FF9800; --danger: #F44336; --info: #2196F3;
+            --bg-body: #FFFDE7; --bg-soft: #FFF59D; --bg-card: #FFFFFF;
+            --text-main: #424242; --text-light: #616161; --white: #ffffff;
+            --border: #E0E0E0; --sidebar-width: 260px; --header-height: 70px;
+            --radius-sm: 12px; --radius-md: 16px; --radius-lg: 24px;
+            --shadow-sm: 0 4px 6px -1px rgba(251, 192, 45, 0.15);
+            --shadow-md: 0 10px 15px -3px rgba(251, 192, 45, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(251, 192, 45, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--text-main); background-color: var(--bg-body); line-height: 1.7; overflow-x: hidden; touch-action: manipulation; }
+        h1, h2, h3, h4 { font-family: 'Lora', serif; color: var(--text-main); line-height: 1.2; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; height: auto; }
+
+        .loading-spinner { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary-dark); border-radius: 50%; animation: spin 1s linear infinite; }
+
+        .header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); background: linear-gradient(135deg, var(--primary-bright) 0%, var(--primary) 100%); box-shadow: var(--shadow-lg); z-index: 900; display: flex; align-items: center; padding: 0 15px; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 100%; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-toggle { display: none; background: none; border: none; color: #3e2723; font-size: 1.4rem; cursor: pointer; z-index: 1001; padding: 8px; width: 44px; height: 44px; border-radius: 8px; }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .logo-mini { height: 40px; width: auto; object-fit: contain; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .search-bar { background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5); padding: 8px 15px; border-radius: 25px; display: flex; align-items: center; gap: 8px; color: #3e2723; width: 200px; transition: var(--transition); }
+        .search-bar:focus-within { background: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.8); width: 250px; }
+        .search-bar input { background: none; border: none; outline: none; width: 100%; color: #3e2723; font-size: 0.9rem; }
+        .search-bar input::placeholder { color: rgba(62, 39, 35, 0.6); }
+        .header-icons { display: flex; align-items: center; gap: 12px; }
+        .icon-btn { background: rgba(255,255,255,0.25); border: none; width: 40px; height: 40px; border-radius: 50%; color: #3e2723; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: var(--transition); position: relative; }
+        .icon-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+        .icon-btn:active { transform: scale(0.95); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: #e53935; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+        .client-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; position: relative; padding: 5px; border-radius: 25px; }
+        .client-profile:hover { background: rgba(255,255,255,0.2); }
+        .profile-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.1rem; border: 2px solid rgba(255,255,255,0.5); }
+        .profile-info { display: none; flex-direction: column; gap: 2px; }
+        @media (min-width: 992px) { .profile-info { display: flex; } }
+        .profile-name { font-weight: 700; font-size: 0.9rem; color: #3e2723; }
+        .profile-role { font-size: 0.7rem; color: rgba(62, 39, 35, 0.7); }
+        .profile-dropdown { display: none; position: fixed; top: 70px; right: 15px; background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); min-width: 250px; z-index: 1000; overflow: hidden; animation: slideDown 0.3s ease-out; }
+        .profile-dropdown.active { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .profile-header { background: linear-gradient(135deg, var(--primary-bright) 0%, var(--primary) 100%); padding: 20px; display: flex; align-items: center; gap: 15px; color: #3e2723; }
+        .profile-header .profile-avatar { width: 55px; height: 55px; font-size: 1.3rem; border: 3px solid rgba(255,255,255,0.5); }
+        .profile-header-info h4 { font-size: 1rem; margin-bottom: 2px; }
+        .profile-header-info p { font-size: 0.8rem; opacity: 0.8; }
+        .profile-menu { padding: 10px 0; }
+        .profile-menu-item { padding: 14px 20px; display: flex; align-items: center; gap: 12px; color: var(--text-main); transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+        .profile-menu-item:hover { background: var(--bg-soft); border-left-color: var(--primary); padding-left: 25px; }
+        .profile-menu-item:active { background: var(--primary-light); }
+        .profile-menu-item i { color: var(--primary-dark); }
+        .profile-menu-divider { height: 1px; background: #eee; margin: 5px 0; }
+        .sidebar { position: fixed; left: 0; top: var(--header-height); width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: var(--white); box-shadow: var(--shadow-sm); z-index: 800; overflow-y: auto; padding: 20px 0; transition: transform 0.3s ease; -webkit-overflow-scrolling: touch; }
+        .sidebar-item { padding: 16px 20px; display: flex; align-items: center; gap: 15px; color: var(--text-main); transition: var(--transition); cursor: pointer; position: relative; user-select: none; }
+        .sidebar-item:hover { background: var(--bg-soft); padding-left: 25px; }
+        .sidebar-item.active { background: var(--primary-light); border-left: 4px solid var(--primary-dark); color: var(--primary-dark); font-weight: 600; padding-left: 25px; }
+        .sidebar-item i { width: 24px; text-align: center; font-size: 1.1rem; color: var(--primary-dark); }
+        .sidebar-section-title { padding: 20px 20px 10px; font-size: 0.75rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-divider { height: 1px; background: #eee; margin: 10px 20px; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 799; }
+        .sidebar-overlay.active { display: block; }
+        .main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 25px; min-height: calc(100vh - var(--header-height)); background-color: #fafafa; transition: margin-left 0.3s ease; }
+        .page-header { margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid var(--primary-light); }
+        .page-header h1 { font-family: 'Lora', serif; font-size: 2rem; color: var(--primary-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .page-subtitle { color: var(--text-light); font-size: 1rem; max-width: 600px; }
+        
+        /* NEW PROFILE STYLES */
+        .profile-container {
+            display: block;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .profile-header-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+        }
+        
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 2.5rem;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-header-info h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .profile-header-info p {
+            opacity: 0.9;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        .profile-edit-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+        
+        .profile-edit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .profile-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+        
+        .profile-section:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .section-title i {
+            background: var(--primary-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-dark);
+        }
+        
+        .section-title h2 {
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        
+        .info-value:read-only {
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+        
+        .info-value.editable {
+            background: white;
+            border-color: var(--primary);
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .slider.round {
+            border-radius: 34px;
+        }
+        
+        .slider.round:before {
+            border-radius: 50%;
+        }
+        
+        .profile-actions {
+            display: none;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--primary-light);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, var(--success) 0%, #2E7D32 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-cancel {
+            background: #f8f9fa;
+            color: var(--text-main);
+            border: 2px solid var(--border);
+            padding: 12px 25px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        .btn-cancel:hover {
+            background: #e9ecef;
+        }
+        
+        /* Dashboard Styles */
+        .dashboard-container {
+            display: none;
+        }
+        
+        .job-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 15px; transition: var(--transition); border: 2px solid transparent; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary-light); }
+        .stat-icon { width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-bright) 100%); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--primary-dark); }
+        .stat-content h3 { font-size: 1.8rem; margin-bottom: 5px; color: var(--primary-dark); }
+        .filter-bar { background: var(--bg-card); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 25px; box-shadow: var(--shadow-sm); display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; }
+        .search-box { flex: 1; min-width: 250px; position: relative; }
+        .search-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+        .search-box input { width: 100%; padding: 14px 16px 14px 45px; border: 2px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; transition: var(--transition); background: #f8f9fa; }
+        .search-box input:focus { border-color: var(--primary); background: white; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; border: none; padding: 13px 25px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-size: 0.95rem; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(251, 192, 45, 0.3); }
+        .btn-primary:active { transform: translateY(0); }
+        .jobs-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .job-card { background: var(--bg-card); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition); border: 2px solid transparent; position: relative; cursor: pointer; }
+        .job-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--primary-light); }
+        .job-card-header { padding: 22px; border-bottom: 2px solid var(--primary-light); background: linear-gradient(135deg, var(--primary-light) 0%, transparent 100%); }
+        .job-status { position: absolute; top: 18px; right: 18px; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-open { background: var(--success); color: white; }
+        .status-closed { background: var(--danger); color: white; }
+        .status-draft { background: var(--warning); color: white; }
+        .status-pending { background: var(--info); color: white; }
+        .job-title { font-family: 'Lora', serif; font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 8px; line-height: 1.3; }
+        .job-card-body { padding: 22px; }
+        .job-details { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; }
+        .detail-item { flex: 1; min-width: 120px; }
+        .detail-label { font-size: 0.75rem; color: var(--text-light); margin-bottom: 4px; text-transform: uppercase; }
+        .detail-value { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .job-card-footer { padding: 18px 22px; background: #f8f9fa; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .job-actions { display: flex; gap: 8px; }
+        .action-btn { padding: 8px 14px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: var(--transition); }
+        .action-btn:hover { transform: translateY(-2px); }
+        .action-btn:active { transform: translateY(0); }
+        .btn-view { background: rgba(33, 150, 243, 0.1); color: var(--info); }
+        .btn-edit { background: rgba(251, 192, 45, 0.1); color: var(--primary-dark); }
+        .btn-delete { background: rgba(244, 67, 54, 0.1); color: var(--danger); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center; padding: 15px; overflow-y: auto; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { background: white; border-radius: var(--radius-lg); width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { padding: 20px; border-bottom: 2px solid var(--primary-light); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h2 { font-size: 1.5rem; color: var(--primary-dark); }
+        .modal-close { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-light); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+        .modal-close:hover { background: #f5f5f5; color: var(--danger); }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--text-main); font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 13px 16px; border: 2px solid var(--border); border-radius: var(--radius-md); background: #f8f9fa; font-size: 0.95rem; transition: var(--transition); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); background: white; outline: none; }
+        .form-actions { padding: 20px; text-align: right; display: flex; justify-content: flex-end; gap: 12px; }
+        .btn-secondary { padding: 11px 22px; border: 2px solid var(--border); border-radius: var(--radius-md); cursor: pointer; background: white; color: var(--text-main); font-weight: 600; transition: var(--transition); }
+        .btn-secondary:hover { background: #f5f5f5; border-color: var(--text-light); }
+        .floating-btn-container { position: fixed; bottom: 25px; right: 25px; z-index: 999; }
+        .floating-btn { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; border: none; border-radius: 50px; padding: 16px 28px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 25px rgba(251, 192, 45, 0.3); animation: pulse 2s infinite; transition: var(--transition); }
+        .floating-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 30px rgba(251, 192, 45, 0.4); }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(251, 192, 45, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(251, 192, 45, 0); } 100% { box-shadow: 0 0 0 0 rgba(251, 192, 45, 0); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .toast { position: fixed; top: 90px; right: 20px; padding: 15px 25px; border-radius: var(--radius-md); color: white; font-weight: 600; z-index: 10000; box-shadow: var(--shadow-md); animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--info); }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .menu-toggle { display: block; }
+            .search-bar { width: 40px; padding: 8px; justify-content: center; }
+            .search-bar input { display: none; }
+            .search-bar:focus-within { width: 180px; }
+            .search-bar:focus-within input { display: block; }
+            .jobs-container { grid-template-columns: 1fr; gap: 20px; }
+            .filter-bar { padding: 15px; }
+            .search-box { min-width: 100%; }
+            .btn-primary { width: 100%; justify-content: center; }
+            .header { padding: 0 12px; }
+            .profile-info { display: none; }
+            .profile-details-grid { grid-template-columns: 1fr; }
+            .profile-header-card { flex-direction: column; text-align: center; gap: 20px; }
+        }
+
+        @media (max-width: 576px) {
+            .header { height: 60px; }
+            .sidebar { top: 60px; height: calc(100vh - 60px); }
+            .main-content { margin-top: 60px; padding: 15px; }
+            .page-header h1 { font-size: 1.6rem; }
+            .job-stats { grid-template-columns: 1fr; }
+            .stat-card { padding: 15px; }
+            .floating-btn-container { bottom: 15px; right: 15px; }
+            .floating-btn { padding: 14px 22px; font-size: 0.9rem; }
+            .modal { max-height: 85vh; }
+            .modal-header { padding: 15px; }
+            .form-actions { padding: 15px; flex-direction: column; }
+            .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+            .job-card-header, .job-card-body, .job-card-footer { padding: 18px; }
+            .job-title { font-size: 1.2rem; }
+            .profile-section { padding: 20px; }
+            .profile-header-card { padding: 20px; }
+            .profile-avatar-large { width: 80px; height: 80px; font-size: 1.8rem; }
+            .profile-header-info h1 { font-size: 1.6rem; }
+        }
+
+        button, .sidebar-item, .profile-menu-item, .action-btn { min-height: 44px; }
+        input, select, textarea { font-size: 16px !important; }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="dashboardContent" style="display: none;">
+        <header class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+                    <img src="https://static.wixstatic.com/media/7339e9_c69fdd02462d47f58df76b3c64ddd811~mv2.png" alt="Logo" class="logo-mini">
+                </div>
+                <div class="header-right">
+                    <div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="Search..."></div>
+                    <div class="header-icons">
+                        <button class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i><span class="notification-badge">3</span></button>
+                        <button class="icon-btn" aria-label="Messages"><i class="fas fa-envelope"></i></button>
+                    </div>
+                    <div class="client-profile" id="profileBtn">
+                        <div class="profile-avatar" id="userAvatar">U</div>
+                        <div class="profile-info">
+                            <span class="profile-name" id="userName">User</span>
+                            <span class="profile-role" id="userRole">Client</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.7;"></i>
+                    </div>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-header">
+                            <div class="profile-avatar" id="dropdownAvatar">U</div>
+                            <div class="profile-header-info"><h4 id="dropdownName">User</h4><p id="dropdownEmail">email@example.com</p></div>
+                        </div>
+                        <div class="profile-menu">
+                            <div class="profile-menu-item" onclick="showProfilePage()"><i class="fas fa-user"></i><span>My Profile</span></div>
+                            <div class="profile-menu-divider"></div>
+                            <div class="profile-menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section-title">Main Menu</div>
+            <div class="sidebar-item active" data-page="dashboard" onclick="showDashboard()"><i class="fas fa-home"></i><span>Dashboard</span></div>
+            <div class="sidebar-item" data-page="job-posted" onclick="showJobs()"><i class="fas fa-calendar-alt"></i><span>Job Posted</span></div>
+            <div class="sidebar-item" data-page="applicants" onclick="showApplicants()"><i class="fas fa-file-medical"></i><span>Applicants</span></div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-title">Support</div>
+            <div class="sidebar-item"><i class="fas fa-life-ring"></i><span>Help Center</span></div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="main-content" id="mainContent">
+            <!-- Profile Page -->
+            <div class="profile-container" id="profilePage">
+                <div class="profile-header-card">
+                    <div class="profile-avatar-large" id="profileAvatarLarge">U</div>
+                    <div class="profile-header-info">
+                        <h1 id="profileFullName">Loading...</h1>
+                        <p>SeniorStar Client</p>
+                        <button class="profile-edit-btn" onclick="toggleEditMode()">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="profile-details-grid">
+                    <div class="profile-section">
+                        <div class="section-title">
+                            <i class="fas fa-id-card"></i>
+                            <h2>Personal Information</h2>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">First Name</span>
+                                <input type="text" class="info-value" id="firstName" value="Loading..." readonly>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Name</span>
+                                <input type="text" class="info-value" id="lastName" value="Loading..." readonly>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Zip Code</span>
+                                <input type="text" class="info-value" id="zipCode" value="00000" readonly>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Address</span>
+                                <input type="text" class="info-value" id="address" value="Address not set" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <div class="section-title">
+                            <i class="fas fa-envelope"></i>
+                            <h2>Contact Information</h2>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Email Address</span>
+                                <input type="email" class="info-value" id="email" value="loading@example.com" readonly>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Contact Number</span>
+                                <input type="tel" class="info-value" id="contactNumber" value="(000) 000-0000" readonly>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Account Status</span>
+                                <div class="info-value" style="background: #E8F5E9; border-left-color: var(--success); border: 1px solid #C8E6C9;">
+                                    <span style="color: var(--success); font-weight: 600;">Active</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Member Since</span>
+                                <div class="info-value">2023</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <div class="section-title">
+                            <i class="fas fa-lock"></i>
+                            <h2>Security</h2>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Password</span>
+                                <div class="password-container">
+                                    <input type="password" class="info-value" id="password" value="••••••••" readonly>
+                                    <button class="toggle-password" onclick="togglePasswordVisibility()">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Two-Factor Auth</span>
+                                <div class="info-value" style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa;">
+                                    <span>Disabled</span>
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Login</span>
+                                <div class="info-value">Today</div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Account Type</span>
+                                <div class="info-value">Client</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-actions" id="profileActions">
+                    <button class="btn-save" onclick="saveProfile()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="btn-cancel" onclick="cancelEdit()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Dashboard Page -->
+            <div class="dashboard-container" id="dashboardPage">
+                <div class="page-header">
+                    <h1><i class="fas fa-home"></i> Dashboard</h1>
+                    <p class="page-subtitle">Welcome back! Here's what's happening with your jobs.</p>
+                </div>
+                
+                <div class="job-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                        <div class="stat-content">
+                            <h3 id="totalJobs">0</h3>
+                            <p>Total Jobs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-content">
+                            <h3 id="activeJobs">0</h3>
+                            <p>Active Jobs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-content">
+                            <h3>0</h3>
+                            <p>Applicants</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-content">
+                            <h3>0</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchJobs" placeholder="Search jobs...">
+                    </div>
+                    <select id="filterStatus" onchange="filterJobs(this.value)" style="padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-md); background: #f8f9fa;">
+                        <option value="">All Status</option>
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                    <button class="btn-primary" id="newJobBtn"><i class="fas fa-plus"></i> New Job</button>
+                </div>
+                
+                <div class="jobs-container" id="jobsContainer">
+                    <!-- Jobs will be loaded here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Job Modal -->
+        <div class="modal-overlay" id="jobModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Post New Job</h2>
+                    <button class="modal-close" id="closeModal"><i class="fas fa-times"></i></button>
+                </div>
+                <form id="jobForm">
+                    <input type="hidden" id="jobId">
+                    <div style="padding: 20px;">
+                        <div class="form-group">
+                            <label for="jobTitle">Job Title</label>
+                            <input type="text" id="jobTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobCategory">Category</label>
+                            <select id="jobCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="caregiving">Caregiving</option>
+                                <option value="companionship">Companionship</option>
+                                <option value="housekeeping">Housekeeping</option>
+                                <option value="transportation">Transportation</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobSalary">Pay Rate ($/hr)</label>
+                            <input type="number" id="jobSalary" min="10" step="0.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobLocation">Location</label>
+                            <input type="text" id="jobLocation" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobStatusModal">Status</label>
+                            <select id="jobStatusModal" required>
+                                <option value="open">Open</option>
+                                <option value="pending">Pending</option>
+                                <option value="closed">Closed</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobDescription">Description</label>
+                            <textarea id="jobDescription" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelModal">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal-overlay" id="confirmModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Confirm Delete</h2>
+                    <button class="modal-close" id="cancelConfirm"><i class="fas fa-times"></i></button>
+                </div>
+                <div style="padding: 20px;">
+                    <p>Are you sure you want to delete this job? This action cannot be undone.</p>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-secondary" id="cancelConfirmBtn">Cancel</button>
+                    <button class="btn-primary" id="confirmAction" style="background: var(--danger);">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="floating-btn-container">
+            <button class="floating-btn" id="floatingJobBtn"><i class="fas fa-plus"></i> New Job</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize variables
+        let editMode = false;
+        let originalProfileData = {};
+        const appState = { 
+            jobs: [], 
+            currentFilters: { search: '', status: '' }, 
+            deleteJobId: null,
+            currentPage: 'profile'
+        };
+
+        // Wix Backend Communication
+        const WixBackend = {
+            requestSession: () => {
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ action: 'checkSession' }, '*');
+                } else {
+                    // Fallback for testing
+                    setTimeout(() => {
+                        updateUserUI({
+                            id: 'test123',
+                            username: 'testuser',
+                            fullName: 'Test User',
+                            email: 'test@example.com',
+                            role: 'Client'
+                        });
+                    }, 1000);
+                }
+            },
+            loadData: () => {
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ action: 'LOAD_JOBS' }, '*');
+                }
+            },
+            saveJob: (data) => {
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ action: 'SAVE_JOB', data }, '*');
+                }
+            },
+            deleteJob: (jobId) => {
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ action: 'DELETE_JOB', jobId }, '*');
+                }
+            },
+            logout: () => {
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ action: 'logout' }, '*');
+                }
+            },
+            convertToAppFormat: (items) => items.map(item => ({
+                _id: item._id,
+                title: item.job_title,
+                category: item.category,
+                salary: item.pay_rate,
+                location: item.location,
+                status: item.status,
+                description: item.job_description,
+                createdAt: item._createdDate,
+                applicants: 0
+            }))
+        };
+
+        // Message listener
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            console.log('Received message:', data);
+            
+            if (data.action === 'sessionResult') {
+                updateUserUI(data.user);
+                WixBackend.loadData();
+            }
+            if (data.action === 'JOBS_LOADED') {
+                appState.jobs = WixBackend.convertToAppFormat(data.items || []);
+                renderJobs();
+                updateStats();
+            }
+            if (data.action === 'SAVE_COMPLETE') {
+                closeJobModal();
+                WixBackend.loadData();
+                showToast('Job saved successfully!', 'success');
+            }
+            if (data.action === 'DELETE_COMPLETE') {
+                document.getElementById('confirmModal').classList.remove('active');
+                WixBackend.loadData();
+                showToast('Job deleted successfully!', 'success');
+            }
+        });
+
+        // Update user interface with session data
+        function updateUserUI(user) {
+            console.log('Updating UI with user:', user);
+            
+            // Update header
+            document.getElementById('userName').innerText = user.fullName || user.username || 'User';
+            document.getElementById('dropdownName').innerText = user.fullName || user.username || 'User';
+            document.getElementById('dropdownEmail').innerText = user.email || 'email@example.com';
+            document.getElementById('userRole').innerText = user.role || 'Client';
+            
+            // Generate initials
+            const name = user.fullName || user.username || 'User';
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('userAvatar').innerText = initials;
+            document.getElementById('dropdownAvatar').innerText = initials;
+            
+            // Update profile page
+            updateProfilePage(user);
+            
+            // Show content
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+            
+            // Show profile page by default
+            showProfilePage();
+        }
+
+        // Update profile page with user data
+        function updateProfilePage(user) {
+            const name = user.fullName || user.username || 'User';
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+            const email = user.email || 'email@example.com';
+            const initials = (firstName[0] || '') + (lastName[0] || '') || 'U';
+            
+            // Update profile header
+            document.getElementById('profileFullName').innerText = name;
+            document.getElementById('profileAvatarLarge').innerText = initials.toUpperCase();
+            
+            // Update form fields
+            document.getElementById('firstName').value = firstName;
+            document.getElementById('lastName').value = lastName;
+            document.getElementById('email').value = email;
+            
+            // Store original values
+            originalProfileData = {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                zipCode: document.getElementById('zipCode').value,
+                address: document.getElementById('address').value,
+                contactNumber: document.getElementById('contactNumber').value
+            };
+        }
+
+        // Page Navigation
+        function showProfilePage() {
+            appState.currentPage = 'profile';
+            document.getElementById('profilePage').style.display = 'block';
+            document.getElementById('dashboardPage').style.display = 'none';
+            
+            // Update sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('.sidebar-item[data-page="profile"]').classList.add('active');
+            
+            // Close mobile sidebar
+            closeSidebar();
+        }
+
+        function showDashboard() {
+            appState.currentPage = 'dashboard';
+            document.getElementById('profilePage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            
+            // Update sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('.sidebar-item[data-page="dashboard"]').classList.add('active');
+            
+            // Close mobile sidebar
+            closeSidebar();
+        }
+
+        function showJobs() {
+            // For now, show dashboard
+            showDashboard();
+            showToast('Jobs page coming soon!', 'info');
+        }
+
+        function showApplicants() {
+            // For now, show dashboard
+            showDashboard();
+            showToast('Applicants page coming soon!', 'info');
+        }
+
+        // Profile Edit Functions
+        function toggleEditMode() {
+            editMode = !editMode;
+            const inputs = ['firstName', 'lastName', 'zipCode', 'address', 'email', 'contactNumber', 'password'];
+            const profileActions = document.getElementById('profileActions');
+            
+            if (editMode) {
+                // Enable editing
+                inputs.forEach(id => {
+                    const input = document.getElementById(id);
+                    input.readOnly = false;
+                    input.classList.add('editable');
+                });
+                profileActions.style.display = 'flex';
+                showToast('Edit mode enabled', 'info');
+            } else {
+                // Disable editing
+                inputs.forEach(id => {
+                    const input = document.getElementById(id);
+                    input.readOnly = true;
+                    input.classList.remove('editable');
+                });
+                profileActions.style.display = 'none';
+            }
+        }
+
+        function saveProfile() {
+            // Get updated values
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const fullName = `${firstName} ${lastName}`.trim();
+            
+            // Update profile header
+            document.getElementById('profileFullName').innerText = fullName;
+            const initials = (firstName[0] || '') + (lastName[0] || '') || 'U';
+            document.getElementById('profileAvatarLarge').innerText = initials.toUpperCase();
+            
+            // Update header
+            document.getElementById('userName').innerText = fullName;
+            document.getElementById('dropdownName').innerText = fullName;
+            document.getElementById('userAvatar').innerText = initials.toUpperCase();
+            document.getElementById('dropdownAvatar').innerText = initials.toUpperCase();
+            
+            // Save changes (in a real app, you would send to backend)
+            showToast('Profile updated successfully!', 'success');
+            
+            // Exit edit mode
+            toggleEditMode();
+        }
+
+        function cancelEdit() {
+            // Restore original values
+            document.getElementById('firstName').value = originalProfileData.firstName;
+            document.getElementById('lastName').value = originalProfileData.lastName;
+            document.getElementById('zipCode').value = originalProfileData.zipCode;
+            document.getElementById('address').value = originalProfileData.address;
+            document.getElementById('email').value = originalProfileData.email;
+            document.getElementById('contactNumber').value = originalProfileData.contactNumber;
+            
+            // Exit edit mode
+            toggleEditMode();
+            showToast('Changes cancelled', 'info');
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.toggle-password i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.className = 'fas fa-eye';
+            }
+        }
+
+        // Jobs Functions (existing)
+        function renderJobs() {
+            const container = document.getElementById('jobsContainer');
+            const search = appState.currentFilters.search.toLowerCase();
+            const status = appState.currentFilters.status;
+            
+            let filtered = appState.jobs.filter(j => 
+                j.title.toLowerCase().includes(search) &&
+                (status === '' || j.status === status)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="text-align:center; padding:50px; grid-column:1/-1;">
+                        <i class="fas fa-briefcase" style="font-size:3rem; color:#ccc; margin-bottom:20px;"></i>
+                        <h3 style="margin-bottom:10px;">No jobs found</h3>
+                        <p style="color:var(--text-light);">Try adjusting your search or create a new job</p>
+                        <button class="btn-primary" onclick="openJobModal()" style="margin-top:20px;"><i class="fas fa-plus"></i> Create Job</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(job => `
+                <div class="job-card" onclick="openJobModal('${job._id}')">
+                    <div class="job-card-header">
+                        <span class="job-status status-${job.status}">${job.status}</span>
+                        <h3 class="job-title">${job.title}</h3>
+                        <span style="color:var(--primary-dark); font-weight:bold; font-size:0.8rem;">${job.category.toUpperCase()}</span>
+                    </div>
+                    <div class="job-card-body">
+                        <div class="job-details">
+                            <div class="detail-item"><div class="detail-label">Rate</div><div class="detail-value">$${job.salary}/hr</div></div>
+                            <div class="detail-item"><div class="detail-label">Location</div><div class="detail-value">${job.location}</div></div>
+                            <div class="detail-item"><div class="detail-label">Applicants</div><div class="detail-value">${job.applicants}</div></div>
+                        </div>
+                        <p style="font-size:0.9rem; color:#666; height:45px; overflow:hidden; text-overflow:ellipsis;">${job.description || 'No description provided'}</p>
+                    </div>
+                    <div class="job-card-footer">
+                        <span style="font-size:0.8rem; color:#999;">Posted ${new Date(job.createdAt).toLocaleDateString()}</span>
+                        <div class="job-actions" onclick="event.stopPropagation()">
+                            <button class="action-btn btn-edit" onclick="editJob('${job._id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn btn-delete" onclick="confirmDelete('${job._id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterJobs(status) {
+            appState.currentFilters.status = status;
+            renderJobs();
+        }
+
+        function updateStats() {
+            document.getElementById('totalJobs').innerText = appState.jobs.length;
+            document.getElementById('activeJobs').innerText = appState.jobs.filter(j => j.status === 'open').length;
+        }
+
+        function openJobModal(jobId = null) {
+            const modal = document.getElementById('jobModal');
+            const form = document.getElementById('jobForm');
+            form.reset();
+            document.getElementById('jobId').value = '';
+
+            if (jobId) {
+                const job = appState.jobs.find(j => j._id === jobId);
+                document.getElementById('jobId').value = job._id;
+                document.getElementById('jobTitle').value = job.title;
+                document.getElementById('jobCategory').value = job.category;
+                document.getElementById('jobSalary').value = job.salary;
+                document.getElementById('jobLocation').value = job.location;
+                document.getElementById('jobStatusModal').value = job.status;
+                document.getElementById('jobDescription').value = job.description;
+                document.getElementById('modalTitle').innerText = 'Edit Job';
+            } else {
+                document.getElementById('modalTitle').innerText = 'Post New Job';
+            }
+            modal.classList.add('active');
+        }
+
+        function closeJobModal() { 
+            document.getElementById('jobModal').classList.remove('active');
+        }
+
+        document.getElementById('jobForm').onsubmit = (e) => {
+            e.preventDefault();
+            const data = {
+                job_title: document.getElementById('jobTitle').value,
+                category: document.getElementById('jobCategory').value,
+                pay_rate: Number(document.getElementById('jobSalary').value),
+                location: document.getElementById('jobLocation').value,
+                status: document.getElementById('jobStatusModal').value,
+                job_description: document.getElementById('jobDescription').value
+            };
+            const id = document.getElementById('jobId').value;
+            if (id) data._id = id;
+            WixBackend.saveJob(data);
+        };
+
+        function editJob(id) {
+            event.stopPropagation();
+            openJobModal(id);
+        }
+
+        function confirmDelete(id) {
+            event.stopPropagation();
+            appState.deleteJobId = id;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function showToast(msg, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        // Initialize event listeners
+        document.getElementById('newJobBtn').onclick = () => openJobModal();
+        document.getElementById('floatingJobBtn').onclick = () => openJobModal();
+        document.getElementById('closeModal').onclick = closeJobModal;
+        document.getElementById('cancelModal').onclick = closeJobModal;
+        document.getElementById('cancelConfirm').onclick = () => document.getElementById('confirmModal').classList.remove('active');
+        document.getElementById('cancelConfirmBtn').onclick = () => document.getElementById('confirmModal').classList.remove('active');
+        document.getElementById('confirmAction').onclick = () => WixBackend.deleteJob(appState.deleteJobId);
+        document.getElementById('searchJobs').oninput = (e) => { 
+            appState.currentFilters.search = e.target.value; 
+            renderJobs(); 
+        };
+        document.getElementById('profileBtn').onclick = () => document.getElementById('profileDropdown').classList.toggle('active');
+        document.getElementById('menuToggle').onclick = () => { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('sidebarOverlay').classList.toggle('active'); 
+        };
+        document.getElementById('sidebarOverlay').onclick = closeSidebar;
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#profileBtn') && !e.target.closest('#profileDropdown')) {
+                document.getElementById('profileDropdown').classList.remove('active');
+            }
+        });
+
+        window.logout = () => WixBackend.logout();
+
+        // Initialize
+        WixBackend.requestSession();
+    </script>
+</body>
+</html>

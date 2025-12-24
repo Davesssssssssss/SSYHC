@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caregiver Portal - SeniorStar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Lora:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FBC02D; --primary-bright: #FDD835; --primary-light: #FFF9C4;
+            --primary-dark: #F57F17; --accent: #2E7D32; --success: #4CAF50;
+            --warning: #FF9800; --danger: #F44336; --info: #2196F3;
+            --bg-body: #FFFDE7; --bg-soft: #FFF59D; --bg-card: #FFFFFF;
+            --text-main: #424242; --text-light: #616161; --white: #ffffff;
+            --border: #E0E0E0; --sidebar-width: 260px; --header-height: 70px;
+            --radius-sm: 12px; --radius-md: 16px; --radius-lg: 24px;
+            --shadow-sm: 0 4px 6px -1px rgba(251, 192, 45, 0.15);
+            --shadow-md: 0 10px 15px -3px rgba(251, 192, 45, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(251, 192, 45, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; color: var(--text-main); background-color: var(--bg-body); line-height: 1.7; overflow-x: hidden; touch-action: manipulation; }
+        h1, h2, h3, h4 { font-family: 'Lora', serif; color: var(--text-main); line-height: 1.2; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; height: auto; }
+
+        .loading-spinner { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary-dark); border-radius: 50%; animation: spin 1s linear infinite; }
+
+        .header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); background: linear-gradient(135deg, var(--primary-bright) 0%, var(--primary) 100%); box-shadow: var(--shadow-lg); z-index: 900; display: flex; align-items: center; padding: 0 15px; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 100%; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-toggle { display: none; background: none; border: none; color: #3e2723; font-size: 1.4rem; cursor: pointer; z-index: 1001; padding: 8px; width: 44px; height: 44px; border-radius: 8px; }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .logo-mini { height: 40px; width: auto; object-fit: contain; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .search-bar { background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5); padding: 8px 15px; border-radius: 25px; display: flex; align-items: center; gap: 8px; color: #3e2723; width: 200px; transition: var(--transition); }
+        .search-bar:focus-within { background: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.8); width: 250px; }
+        .search-bar input { background: none; border: none; outline: none; width: 100%; color: #3e2723; font-size: 0.9rem; }
+        .search-bar input::placeholder { color: rgba(62, 39, 35, 0.6); }
+        .header-icons { display: flex; align-items: center; gap: 12px; }
+        .icon-btn { background: rgba(255,255,255,0.25); border: none; width: 40px; height: 40px; border-radius: 50%; color: #3e2723; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: var(--transition); position: relative; }
+        .icon-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+        .icon-btn:active { transform: scale(0.95); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: #e53935; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+        .client-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; position: relative; padding: 5px; border-radius: 25px; }
+        .client-profile:hover { background: rgba(255,255,255,0.2); }
+        .profile-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.1rem; border: 2px solid rgba(255,255,255,0.5); }
+        .profile-info { display: none; flex-direction: column; gap: 2px; }
+        @media (min-width: 992px) { .profile-info { display: flex; } }
+        .profile-name { font-weight: 700; font-size: 0.9rem; color: #3e2723; }
+        .profile-role { font-size: 0.7rem; color: rgba(62, 39, 35, 0.7); }
+        .profile-dropdown { display: none; position: fixed; top: 70px; right: 15px; background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); min-width: 250px; z-index: 1000; overflow: hidden; animation: slideDown 0.3s ease-out; }
+        .profile-dropdown.active { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .profile-header { background: linear-gradient(135deg, var(--primary-bright) 0%, var(--primary) 100%); padding: 20px; display: flex; align-items: center; gap: 15px; color: #3e2723; }
+        .profile-header .profile-avatar { width: 55px; height: 55px; font-size: 1.3rem; border: 3px solid rgba(255,255,255,0.5); }
+        .profile-header-info h4 { font-size: 1rem; margin-bottom: 2px; }
+        .profile-header-info p { font-size: 0.8rem; opacity: 0.8; }
+        .profile-menu { padding: 10px 0; }
+        .profile-menu-item { padding: 14px 20px; display: flex; align-items: center; gap: 12px; color: var(--text-main); transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+        .profile-menu-item:hover { background: var(--bg-soft); border-left-color: var(--primary); padding-left: 25px; }
+        .profile-menu-item:active { background: var(--primary-light); }
+        .profile-menu-item i { color: var(--primary-dark); }
+        .profile-menu-divider { height: 1px; background: #eee; margin: 5px 0; }
+        .sidebar { position: fixed; left: 0; top: var(--header-height); width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: var(--white); box-shadow: var(--shadow-sm); z-index: 800; overflow-y: auto; padding: 20px 0; transition: transform 0.3s ease; -webkit-overflow-scrolling: touch; }
+        .sidebar-item { padding: 16px 20px; display: flex; align-items: center; gap: 15px; color: var(--text-main); transition: var(--transition); cursor: pointer; position: relative; user-select: none; }
+        .sidebar-item:hover { background: var(--bg-soft); padding-left: 25px; }
+        .sidebar-item.active { background: var(--primary-light); border-left: 4px solid var(--primary-dark); color: var(--primary-dark); font-weight: 600; padding-left: 25px; }
+        .sidebar-item i { width: 24px; text-align: center; font-size: 1.1rem; color: var(--primary-dark); }
+        .sidebar-section-title { padding: 20px 20px 10px; font-size: 0.75rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-divider { height: 1px; background: #eee; margin: 10px 20px; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 799; }
+        .sidebar-overlay.active { display: block; }
+        .main-content { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 25px; min-height: calc(100vh - var(--header-height)); background-color: #fafafa; transition: margin-left 0.3s ease; }
+        .page-header { margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid var(--primary-light); }
+        .page-header h1 { font-family: 'Lora', serif; font-size: 2rem; color: var(--primary-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .page-subtitle { color: var(--text-light); font-size: 1rem; max-width: 600px; }
+
+        /* CAREGIVER DASHBOARD STYLES */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .welcome-card h2 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-card p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-bright) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .stat-trend {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        
+        .trend-up {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+        
+        .trend-down {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .dashboard-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        
+        .dashboard-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .card-header h3 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+        }
+        
+        .card-header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .btn-icon:hover {
+            background: #f5f5f5;
+            color: var(--primary-dark);
+        }
+        
+        /* Available Jobs Table */
+        .jobs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .jobs-table th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 2px solid var(--primary-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .jobs-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        
+        .jobs-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .job-client {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .client-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .client-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+        
+        .client-info p {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .job-pay-rate {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .job-pay-rate span {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: normal;
+        }
+        
+        .job-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+        
+        .btn-apply {
+            background: linear-gradient(135deg, var(--success) 0%, #2E7D32 100%);
+            color: white;
+        }
+        
+        .btn-apply:hover {
+            background: linear-gradient(135deg, #43A047 0%, #1B5E20 100%);
+            transform: translateY(-2px);
+        }
+        
+        .btn-view {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+        }
+        
+        .btn-view:hover {
+            background: rgba(33, 150, 243, 0.2);
+        }
+        
+        /* Interview Schedule */
+        .interview-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .interview-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .interview-item:hover {
+            background: var(--primary-light);
+        }
+        
+        .interview-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--info) 0%, #64B5F6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .interview-info h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .interview-info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .interview-time {
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .interview-time .time {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .interview-time .date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .interview-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        
+        .status-scheduled {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+        }
+        
+        .status-confirmed {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+        
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .skill-tag {
+            background: #f0f4ff;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--info);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .skill-tag i {
+            color: var(--success);
+        }
+        
+        /* Earnings Chart */
+        .earnings-chart {
+            height: 200px;
+            margin-top: 20px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary-light), var(--primary));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .action-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .action-btn i {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+        }
+        
+        /* Job Details Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, var(--primary-bright) 0%, var(--primary) 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: white;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .job-detail-section {
+            margin-bottom: 30px;
+        }
+        
+        .job-detail-section h4 {
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .job-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .job-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .job-detail-item i {
+            color: var(--primary);
+            width: 24px;
+        }
+        
+        .job-description {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--primary-light);
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: var(--text-main);
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .jobs-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .modal {
+                max-height: 95vh;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-card {
+                padding: 20px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .job-actions {
+                flex-direction: column;
+            }
+            
+            .modal-header {
+                padding: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Common Styles */
+        .btn-primary { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; border: none; padding: 13px 25px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-size: 0.95rem; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(251, 192, 45, 0.3); }
+        .btn-primary:active { transform: translateY(0); }
+        
+        .search-box { flex: 1; min-width: 250px; position: relative; }
+        .search-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+        .search-box input { width: 100%; padding: 14px 16px 14px 45px; border: 2px solid var(--border); border-radius: var(--radius-md); font-size: 0.95rem; transition: var(--transition); background: #f8f9fa; }
+        .search-box input:focus { border-color: var(--primary); background: white; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .toast { position: fixed; top: 90px; right: 20px; padding: 15px 25px; border-radius: var(--radius-md); color: white; font-weight: 600; z-index: 10000; box-shadow: var(--shadow-md); animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--info); }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .menu-toggle { display: block; }
+            .search-bar { width: 40px; padding: 8px; justify-content: center; }
+            .search-bar input { display: none; }
+            .search-bar:focus-within { width: 180px; }
+            .search-bar:focus-within input { display: block; }
+            .header { padding: 0 12px; }
+            .profile-info { display: none; }
+        }
+
+        @media (max-width: 576px) {
+            .header { height: 60px; }
+            .sidebar { top: 60px; height: calc(100vh - 60px); }
+            .main-content { margin-top: 60px; padding: 15px; }
+            .page-header h1 { font-size: 1.6rem; }
+        }
+
+        button, .sidebar-item, .profile-menu-item, .action-btn { min-height: 44px; }
+        input, select, textarea { font-size: 16px !important; }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="dashboardContent" style="display: none;">
+        <header class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+                    <img src="https://static.wixstatic.com/media/7339e9_c69fdd02462d47f58df76b3c64ddd811~mv2.png" alt="Logo" class="logo-mini">
+                </div>
+                <div class="header-right">
+                    <div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="Search jobs..." id="jobSearch"></div>
+                    <div class="header-icons">
+                        <button class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i><span class="notification-badge">3</span></button>
+                        <button class="icon-btn" aria-label="Messages"><i class="fas fa-envelope"></i><span class="notification-badge">5</span></button>
+                    </div>
+                    <div class="client-profile" id="profileBtn">
+                        <div class="profile-avatar" id="userAvatar">C</div>
+                        <div class="profile-info">
+                            <span class="profile-name" id="userName">Caregiver</span>
+                            <span class="profile-role" id="userRole">Caregiver</span>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.7;"></i>
+                    </div>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-header">
+                            <div class="profile-avatar" id="dropdownAvatar">C</div>
+                            <div class="profile-header-info"><h4 id="dropdownName">Caregiver</h4><p id="dropdownEmail">caregiver@seniorstar.com</p></div>
+                        </div>
+                        <div class="profile-menu">
+                            <div class="profile-menu-item" onclick="updateProfile()"><i class="fas fa-user"></i><span>My Profile</span></div>
+                            <div class="profile-menu-item"><i class="fas fa-cog"></i><span>Settings</span></div>
+                            <div class="profile-menu-divider"></div>
+                            <div class="profile-menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section-title">Main Menu</div>
+            <div class="sidebar-item active" data-page="dashboard"><i class="fas fa-home"></i><span>Dashboard</span></div>
+            <div class="sidebar-item" data-page="jobs"><i class="fas fa-search"></i><span>Find Jobs</span></div>
+            <div class="sidebar-item" data-page="applications"><i class="fas fa-file-medical"></i><span>My Applications</span></div>
+            <div class="sidebar-item" data-page="schedule"><i class="fas fa-calendar-alt"></i><span>Schedule</span></div>
+            <div class="sidebar-item" data-page="messages"><i class="fas fa-comments"></i><span>Messages</span></div>
+            <div class="sidebar-item" data-page="earnings"><i class="fas fa-chart-line"></i><span>Earnings</span></div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-title">Support</div>
+            <div class="sidebar-item"><i class="fas fa-life-ring"></i><span>Help Center</span></div>
+            <div class="sidebar-item"><i class="fas fa-headset"></i><span>Contact Support</span></div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Job Details Modal -->
+        <div class="modal-overlay" id="jobModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 id="modalJobTitle">Job Details</h3>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Job details will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Update Modal -->
+        <div class="modal-overlay" id="profileModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Update Profile</h3>
+                    <button class="modal-close" onclick="closeProfileModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="job-detail-grid">
+                            <div class="job-detail-item">
+                                <i class="fas fa-user"></i>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Full Name</label>
+                                    <input type="text" id="profileName" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                </div>
+                            </div>
+                            <div class="job-detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email</label>
+                                    <input type="email" id="profileEmail" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                </div>
+                            </div>
+                            <div class="job-detail-item">
+                                <i class="fas fa-phone"></i>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Phone</label>
+                                    <input type="tel" id="profilePhone" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                </div>
+                            </div>
+                            <div class="job-detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Location</label>
+                                    <input type="text" id="profileLocation" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-detail-section">
+                            <h4>Skills & Certifications</h4>
+                            <div id="skillsContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                                <!-- Skills will be added here -->
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="newSkill" placeholder="Add a skill" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                <button type="button" onclick="addSkill()" class="btn-primary" style="padding: 10px 20px;">Add</button>
+                            </div>
+                        </div>
+                        
+                        <div class="job-detail-section">
+                            <h4>Hourly Rate</h4>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2rem;">$</span>
+                                <input type="number" id="profileRate" min="15" max="50" step="1" value="20" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; width: 100px;">
+                                <span>/hour</span>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <main class="main-content" id="mainContent">
+            <!-- Caregiver Dashboard -->
+            <div class="dashboard-container" id="dashboardPage">
+                <div class="page-header">
+                    <h1><i class="fas fa-home"></i> Caregiver Dashboard</h1>
+                    <p class="page-subtitle">Welcome back! Here's an overview of your caregiving activities.</p>
+                </div>
+                
+                <div class="welcome-card">
+                    <h2 id="welcomeMessage">Welcome, Caregiver!</h2>
+                    <p id="welcomeSubtitle">Browse available caregiving jobs and apply for ones that match your skills.</p>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="loadMyApplications()">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                            <span class="stat-trend trend-up" id="appliedTrend">+0%</span>
+                        </div>
+                        <div class="stat-value" id="appliedJobs">0</div>
+                        <div class="stat-label">Applied Jobs</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <span class="stat-trend trend-up" id="earningsTrend">+0%</span>
+                        </div>
+                        <div class="stat-value" id="monthlyEarnings">$0</div>
+                        <div class="stat-label">Estimated Earnings</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-star"></i></div>
+                            <span class="stat-trend trend-up" id="ratingTrend">+0%</span>
+                        </div>
+                        <div class="stat-value" id="averageRating">0.0</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadAvailableJobs()">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                            <span class="stat-trend trend-up" id="jobsTrend">+0%</span>
+                        </div>
+                        <div class="stat-value" id="availableJobsCount">0</div>
+                        <div class="stat-label">Available Jobs</div>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left Column -->
+                    <div>
+                        <!-- Available Jobs -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-briefcase"></i> Available Jobs</h3>
+                                <div class="card-header-actions">
+                                    <button class="btn-icon" onclick="loadAvailableJobs()"><i class="fas fa-sync-alt"></i></button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="jobs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Client</th>
+                                            <th>Service</th>
+                                            <th>Schedule</th>
+                                            <th>Pay Rate</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="availableJobsTable">
+                                        <tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading jobs...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                            </div>
+                            <div class="quick-actions">
+                                <div class="action-btn" onclick="loadAvailableJobs()">
+                                    <i class="fas fa-search"></i>
+                                    <span>Find Jobs</span>
+                                </div>
+                                <div class="action-btn" onclick="updateSchedule()">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    <span>Update Schedule</span>
+                                </div>
+                                <div class="action-btn" onclick="loadMyApplications()">
+                                    <i class="fas fa-file-medical"></i>
+                                    <span>My Applications</span>
+                                </div>
+                                <div class="action-btn" onclick="updateProfile()">
+                                    <i class="fas fa-user-edit"></i>
+                                    <span>Update Profile</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div>
+                        <!-- My Applications -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-file-medical"></i> Recent Applications</h3>
+                                <div class="card-header-actions">
+                                    <button class="btn-icon" onclick="loadMyApplications()"><i class="fas fa-sync-alt"></i></button>
+                                </div>
+                            </div>
+                            <div class="interview-list" id="applicationsList">
+                                <div class="interview-item" style="text-align: center; flex-direction: column; gap: 15px;">
+                                    <div class="interview-icon">
+                                        <i class="fas fa-file-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4>No applications yet</h4>
+                                        <p>Apply for jobs to see your applications here</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- My Skills -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-award"></i> My Skills</h3>
+                            </div>
+                            <div class="skills-grid" id="skillsGrid">
+                                <div class="skill-tag" style="grid-column: 1 / -1; text-align: center; cursor: pointer;" onclick="updateProfile()">
+                                    <span>Add your skills</span>
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize variables
+        const appState = { 
+            currentPage: 'dashboard',
+            userData: null,
+            availableJobs: [],
+            myApplications: [],
+            mySkills: [],
+            profileData: null
+        };
+
+        // Wix Message Handler
+        window.addEventListener('message', async (event) => {
+            const msg = event.data;
+            console.log('Received message from Wix:', msg);
+            
+            if (msg.action === 'sessionResult') {
+                if (msg.loggedIn && msg.user) {
+                    updateUserUI(msg.user);
+                    loadAvailableJobs();
+                    loadMyApplications();
+                    loadProfileData();
+                } else {
+                    showToast('Please log in to continue', 'error');
+                    setTimeout(() => {
+                        window.parent.postMessage({ action: 'logout' }, '*');
+                    }, 2000);
+                }
+            }
+            
+            if (msg.action === 'JOBS_LOADED') {
+                console.log('Jobs loaded:', msg.items);
+                appState.availableJobs = msg.items || [];
+                renderAvailableJobs();
+                updateStats();
+            }
+            
+            if (msg.action === 'APPLICATIONS_LOADED') {
+                console.log('Applications loaded:', msg.items);
+                appState.myApplications = msg.items || [];
+                renderMyApplications();
+                updateStats();
+            }
+            
+            if (msg.action === 'PROFILE_LOADED') {
+                console.log('Profile loaded:', msg.data);
+                appState.profileData = msg.data;
+                updateProfileUI();
+            }
+            
+            if (msg.action === 'APPLICATION_SENT') {
+                if (msg.success) {
+                    showToast('Application submitted successfully!', 'success');
+                    loadAvailableJobs();
+                    loadMyApplications();
+                } else {
+                    showToast('Failed to submit application: ' + (msg.error || 'Unknown error'), 'error');
+                }
+            }
+            
+            if (msg.action === 'PROFILE_UPDATED') {
+                if (msg.success) {
+                    showToast('Profile updated successfully!', 'success');
+                    closeProfileModal();
+                    loadProfileData();
+                } else {
+                    showToast('Failed to update profile: ' + (msg.error || 'Unknown error'), 'error');
+                }
+            }
+        });
+
+        // Initialize session
+        function initializeSession() {
+            console.log('Requesting session from Wix...');
+            if (window.parent && window.parent.postMessage) {
+                window.parent.postMessage({ action: 'checkSession' }, '*');
+            } else {
+                // Fallback for testing
+                setTimeout(() => {
+                    updateUserUI({
+                        id: 'caregiver123',
+                        username: 'sarah_caregiver',
+                        fullName: 'Sarah Johnson',
+                        email: 'sarah@seniorstar.com',
+                        role: 'caregiver',
+                        phone: '+1 (555) 123-4567',
+                        location: 'New York, NY'
+                    });
+                    loadSampleData();
+                }, 1000);
+            }
+        }
+
+        // Update user interface with session data
+        function updateUserUI(user) {
+            console.log('Updating UI with user:', user);
+            
+            // Store user data
+            appState.userData = user;
+            
+            // Update header
+            document.getElementById('userName').innerText = user.fullName || user.username || 'Caregiver';
+            document.getElementById('dropdownName').innerText = user.fullName || user.username || 'Caregiver';
+            document.getElementById('dropdownEmail').innerText = user.email || 'caregiver@seniorstar.com';
+            document.getElementById('userRole').innerText = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Caregiver';
+            
+            // Generate initials
+            const name = user.fullName || user.username || 'Caregiver';
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('userAvatar').innerText = initials;
+            document.getElementById('dropdownAvatar').innerText = initials;
+            
+            // Update welcome message with user's first name
+            const firstName = name.split(' ')[0] || 'Caregiver';
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${firstName}!`;
+            
+            // Show content
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+        }
+
+        // Load available jobs from CRG_INFO collection
+        function loadAvailableJobs() {
+            console.log('Loading available jobs from CRG_INFO...');
+            if (window.parent && window.parent.postMessage) {
+                window.parent.postMessage({ action: 'LOAD_JOBS' }, '*');
+            } else {
+                // Fallback for testing
+                setTimeout(() => {
+                    appState.availableJobs = getSampleJobs();
+                    renderAvailableJobs();
+                    updateStats();
+                }, 500);
+            }
+        }
+
+        // Load my applications
+        function loadMyApplications() {
+            console.log('Loading my applications...');
+            if (window.parent && window.parent.postMessage) {
+                window.parent.postMessage({ 
+                    action: 'LOAD_MY_APPLICATIONS',
+                    caregiverId: appState.userData?.id 
+                }, '*');
+            } else {
+                // Fallback for testing
+                setTimeout(() => {
+                    appState.myApplications = getSampleApplications();
+                    renderMyApplications();
+                    updateStats();
+                }, 500);
+            }
+        }
+
+        // Load profile data
+        function loadProfileData() {
+            console.log('Loading profile data...');
+            if (window.parent && window.parent.postMessage) {
+                window.parent.postMessage({ 
+                    action: 'LOAD_PROFILE',
+                    userId: appState.userData?.id 
+                }, '*');
+            } else {
+                // Fallback for testing
+                setTimeout(() => {
+                    appState.profileData = {
+                        fullName: 'Sarah Johnson',
+                        email: 'sarah@seniorstar.com',
+                        phone: '+1 (555) 123-4567',
+                        location: 'New York, NY',
+                        skills: ['First Aid', 'CPR', 'Dementia Care', 'Medication Management'],
+                        hourlyRate: '25'
+                    };
+                    updateProfileUI();
+                }, 500);
+            }
+        }
+
+        // Update profile UI with data
+        function updateProfileUI() {
+            if (!appState.profileData) return;
+            
+            // Update skills display
+            const skillsGrid = document.getElementById('skillsGrid');
+            if (appState.profileData.skills && appState.profileData.skills.length > 0) {
+                skillsGrid.innerHTML = appState.profileData.skills.map(skill => `
+                    <div class="skill-tag">
+                        <span>${skill}</span>
+                        <i class="fas fa-check"></i>
+                    </div>
+                `).join('');
+                
+                // Add "Add More" button
+                skillsGrid.innerHTML += `
+                    <div class="skill-tag" style="grid-column: 1 / -1; text-align: center; cursor: pointer;" onclick="updateProfile()">
+                        <span>Add more skills</span>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                `;
+            }
+        }
+
+        // Render available jobs
+        function renderAvailableJobs() {
+            const container = document.getElementById('availableJobsTable');
+            
+            if (appState.availableJobs.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-briefcase" style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                            <h4 style="color: var(--text-light); margin-bottom: 10px;">No available jobs found</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Check back later for new job postings</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Sort jobs by creation date (newest first)
+            const sortedJobs = [...appState.availableJobs].sort((a, b) => 
+                new Date(b._createdDate || b.createdDate || 0) - new Date(a._createdDate || a.createdDate || 0)
+            );
+            
+            container.innerHTML = sortedJobs.map(job => {
+                // Map CRG_INFO fields to display
+                const clientName = job.clientName || job.clientName || 'Client';
+                const serviceType = job.serviceType || job.careType || 'Senior Care';
+                const location = job.location || job.clientLocation || 'Location not specified';
+                const schedule = job.schedule || job.days || 'Flexible schedule';
+                const payRate = job.clientRate || job.hourlyRate || '20';
+                const description = job.description || job.careNeeds || 'No description provided';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="job-client">
+                                <div class="client-avatar">${getInitials(clientName)}</div>
+                                <div class="client-info">
+                                    <h4>${clientName}</h4>
+                                    <p>${location}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${serviceType}</td>
+                        <td>
+                            <div style="font-size: 0.85rem;">
+                                <div><strong>${schedule}</strong></div>
+                                <div style="color: var(--text-light);">${job.startTime || 'Flexible hours'}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="job-pay-rate">
+                                $${payRate}<span>/hr</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="job-actions">
+                                <button class="btn-action btn-view" onclick="showJobDetails('${job._id}')">
+                                    <i class="fas fa-eye"></i> Details
+                                </button>
+                                ${!hasAppliedToJob(job._id) ? `
+                                <button class="btn-action btn-apply" onclick="applyForJob('${job._id}')">
+                                    <i class="fas fa-paper-plane"></i> Apply
+                                </button>
+                                ` : `
+                                <button class="btn-action" style="background: #6c757d; color: white;" disabled>
+                                    <i class="fas fa-check"></i> Applied
+                                </button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Update stats
+            document.getElementById('availableJobsCount').textContent = sortedJobs.length;
+        }
+
+        // Render my applications
+        function renderMyApplications() {
+            const container = document.getElementById('applicationsList');
+            
+            if (appState.myApplications.length === 0) {
+                container.innerHTML = `
+                    <div class="interview-item" style="text-align: center; flex-direction: column; gap: 15px;">
+                        <div class="interview-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            <h4>No applications yet</h4>
+                            <p>Apply for jobs to see your applications here</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show only recent applications (last 3)
+            const recentApplications = appState.myApplications.slice(0, 3);
+            
+            container.innerHTML = recentApplications.map(app => {
+                const status = app.status || 'pending';
+                const statusClass = status === 'accepted' ? 'status-confirmed' : 
+                                  status === 'rejected' ? 'trend-down' : 'status-scheduled';
+                const statusText = status.charAt(0).toUpperCase() + status.slice(1);
+                
+                return `
+                    <div class="interview-item">
+                        <div class="interview-icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="interview-info">
+                            <h4>${app.jobTitle || 'Caregiving Job'}</h4>
+                            <p>${app.clientName || 'Client'}</p>
+                            <span class="interview-status ${statusClass}" style="${status === 'rejected' ? 'background: rgba(244, 67, 54, 0.1); color: var(--danger);' : ''}">
+                                ${statusText}
+                            </span>
+                        </div>
+                        <div class="interview-time">
+                            <div class="time">$${app.payRate || '20'}/hr</div>
+                            <div class="date">${formatRelativeDate(app.applicationDate || app._createdDate)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Check if user has already applied to a job
+        function hasAppliedToJob(jobId) {
+            return appState.myApplications.some(app => app.jobId === jobId || app.jobId === jobId);
+        }
+
+        // Show job details modal
+        function showJobDetails(jobId) {
+            const job = appState.availableJobs.find(j => j._id === jobId);
+            
+            if (!job) {
+                showToast('Job not found', 'error');
+                return;
+            }
+            
+            // Map CRG_INFO fields
+            const clientName = job.clientName || job.clientName || 'Client';
+            const serviceType = job.serviceType || job.careType || 'Senior Care';
+            const location = job.location || job.clientLocation || 'Not specified';
+            const schedule = job.schedule || job.days || 'Flexible';
+            const payRate = job.clientRate || job.pay_rate || '20';
+            const description = job.description || job.careNeeds || 'No description provided';
+            const requirements = job.requirements || job.skillsRequired || '';
+            
+            // Update modal title
+            document.getElementById('modalJobTitle').textContent = 
+                `${serviceType} - ${clientName}`;
+            
+            // Build job details HTML
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="job-detail-grid">
+                    <div class="job-detail-item">
+                        <i class="fas fa-user"></i>
+                        <div>
+                            <strong>Client</strong>
+                            <div>${clientName}</div>
+                        </div>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Location</strong>
+                            <div>${location}</div>
+                        </div>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-calendar"></i>
+                        <div>
+                            <strong>Schedule</strong>
+                            <div>${schedule}</div>
+                        </div>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>Timing</strong>
+                            <div>${job.startTime || 'Flexible'}</div>
+                        </div>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div>
+                            <strong>Pay Rate</strong>
+                            <div>$${payRate}/hour</div>
+                        </div>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-stethoscope"></i>
+                        <div>
+                            <strong>Service Type</strong>
+                            <div>${serviceType}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="job-detail-section">
+                    <h4>Job Description</h4>
+                    <div class="job-description">
+                        ${description}
+                    </div>
+                </div>
+                
+                ${requirements ? `
+                <div class="job-detail-section">
+                    <h4>Requirements</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        ${requirements.split(',').map(skill => 
+                            `<span style="background: #f0f4ff; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem;">${skill.trim()}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeJobModal()">Close</button>
+                    ${!hasAppliedToJob(job._id) ? `
+                    <button class="btn-primary" onclick="applyForJobFromModal('${job._id}')">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </button>
+                    ` : `
+                    <button class="btn-primary" style="background: #6c757d;" disabled>
+                        <i class="fas fa-check"></i> Already Applied
+                    </button>
+                    `}
+                </div>
+            `;
+            
+            // Show modal
+            document.getElementById('jobModal').classList.add('active');
+        }
+
+        // Close job modal
+        function closeJobModal() {
+            document.getElementById('jobModal').classList.remove('active');
+        }
+
+        // Apply for job from modal
+        function applyForJobFromModal(jobId) {
+            closeJobModal();
+            applyForJob(jobId);
+        }
+
+        // Apply for a job
+        function applyForJob(jobId) {
+            if (!appState.userData?.id) {
+                showToast('Please log in to apply for jobs', 'error');
+                return;
+            }
+            
+            const job = appState.availableJobs.find(j => j._id === jobId);
+            if (!job) {
+                showToast('Job not found', 'error');
+                return;
+            }
+            
+            if (hasAppliedToJob(jobId)) {
+                showToast('You have already applied for this job', 'info');
+                return;
+            }
+            
+            // Map CRG_INFO fields for application
+            const clientName = job.clientName || job.clientName || 'Client';
+            const serviceType = job.serviceType || job.careType || 'Senior Care';
+            const payRate = job.payRate || job.hourlyRate || '20';
+            
+            if (confirm(`Are you sure you want to apply for this ${serviceType} job with ${clientName}?`)) {
+                showToast('Submitting application...', 'info');
+                
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ 
+                        action: 'APPLY_FOR_JOB',
+                        jobId: jobId,
+                        jobTitle: serviceType,
+                        clientName: clientName,
+                        clientId: job.clientid || job.clientId,
+                        payRate: payRate,
+                        caregiverId: appState.userData.id,
+                        caregiverName: appState.userData.fullName || appState.userData.username,
+                        caregiverEmail: appState.userData.email,
+                        applicationDate: new Date().toISOString()
+                    }, '*');
+                } else {
+                    // Fallback for testing
+                    setTimeout(() => {
+                        showToast('Application submitted successfully!', 'success');
+                        
+                        // Add to applications locally
+                        appState.myApplications.unshift({
+                            _id: 'app_' + Date.now(),
+                            jobId: jobId,
+                            jobTitle: serviceType,
+                            clientName: clientName,
+                            payRate: payRate,
+                            status: 'pending',
+                            applicationDate: new Date().toISOString()
+                        });
+                        
+                        // Update UI
+                        renderAvailableJobs();
+                        renderMyApplications();
+                        updateStats();
+                    }, 1000);
+                }
+            }
+        }
+
+        // Update profile modal
+        function updateProfile() {
+            // Populate form with current data
+            if (appState.profileData) {
+                document.getElementById('profileName').value = appState.profileData.fullName || appState.userData?.fullName || '';
+                document.getElementById('profileEmail').value = appState.profileData.email || appState.userData?.email || '';
+                document.getElementById('profilePhone').value = appState.profileData.phone || '';
+                document.getElementById('profileLocation').value = appState.profileData.location || '';
+                document.getElementById('profileRate').value = appState.profileData.hourlyRate || '20';
+                
+                // Populate skills
+                const skillsContainer = document.getElementById('skillsContainer');
+                skillsContainer.innerHTML = '';
+                if (appState.profileData.skills) {
+                    appState.profileData.skills.forEach(skill => {
+                        addSkillToUI(skill);
+                    });
+                }
+            }
+            
+            // Show modal
+            document.getElementById('profileModal').classList.add('active');
+        }
+
+        // Close profile modal
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('active');
+        }
+
+        // Add skill to UI
+        function addSkillToUI(skill) {
+            const skillsContainer = document.getElementById('skillsContainer');
+            const skillElement = document.createElement('div');
+            skillElement.className = 'skill-tag';
+            skillElement.style.margin = '0';
+            skillElement.innerHTML = `
+                <span>${skill}</span>
+                <i class="fas fa-times" onclick="removeSkill(this)" style="cursor: pointer; color: var(--danger);"></i>
+            `;
+            skillsContainer.appendChild(skillElement);
+        }
+
+        // Add skill
+        function addSkill() {
+            const newSkillInput = document.getElementById('newSkill');
+            const skill = newSkillInput.value.trim();
+            
+            if (skill) {
+                addSkillToUI(skill);
+                newSkillInput.value = '';
+            }
+        }
+
+        // Remove skill
+        function removeSkill(element) {
+            element.parentElement.remove();
+        }
+
+        // Save profile
+        function saveProfile(event) {
+            event.preventDefault();
+            
+            // Collect form data
+            const profileData = {
+                fullName: document.getElementById('profileName').value,
+                email: document.getElementById('profileEmail').value,
+                phone: document.getElementById('profilePhone').value,
+                location: document.getElementById('profileLocation').value,
+                hourlyRate: document.getElementById('profileRate').value,
+                skills: Array.from(document.querySelectorAll('#skillsContainer .skill-tag span'))
+                    .map(span => span.textContent)
+            };
+            
+            // Send to backend
+            if (window.parent && window.parent.postMessage) {
+                window.parent.postMessage({ 
+                    action: 'UPDATE_PROFILE',
+                    data: profileData,
+                    userId: appState.userData?.id
+                }, '*');
+            } else {
+                // Fallback for testing
+                setTimeout(() => {
+                    showToast('Profile updated successfully!', 'success');
+                    appState.profileData = profileData;
+                    updateProfileUI();
+                    closeProfileModal();
+                }, 1000);
+            }
+        }
+
+        // Update stats
+        function updateStats() {
+            // Update applied jobs count
+            const appliedCount = appState.myApplications.length;
+            document.getElementById('appliedJobs').textContent = appliedCount;
+            
+            // Update available jobs count
+            const availableCount = appState.availableJobs.length;
+            document.getElementById('availableJobsCount').textContent = availableCount;
+            
+            // Update earnings (estimated based on applications)
+            const estimatedEarnings = appState.myApplications.reduce((total, app) => {
+                const payRate = parseFloat(app.payRate) || 20;
+                const hours = 40; // Assuming 40 hours per job
+                return total + (payRate * hours);
+            }, 0);
+            document.getElementById('monthlyEarnings').textContent = `$${estimatedEarnings.toLocaleString()}`;
+            
+            // Update rating (simulated)
+            if (appState.myApplications.length > 0) {
+                document.getElementById('averageRating').textContent = '4.8';
+                document.getElementById('ratingTrend').textContent = '+5%';
+            }
+            
+            // Update trends
+            if (appliedCount > 0) {
+                document.getElementById('appliedTrend').textContent = '+12%';
+            }
+            if (availableCount > 10) {
+                document.getElementById('jobsTrend').textContent = '+15%';
+            }
+        }
+
+        // Helper Functions
+        function getInitials(name) {
+            if (!name) return 'NA';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function formatRelativeDate(dateStr) {
+            if (!dateStr) return '';
+            try {
+                const date = new Date(dateStr);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) return 'Today';
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
+                if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+                return formatDate(dateStr);
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+            } catch (e) {
+                return 'N/A';
+            }
+        }
+
+        function showToast(msg, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        // Logout function
+        window.logout = () => {
+            if (confirm('Are you sure you want to logout?')) {
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ action: 'logout' }, '*');
+                } else {
+                    showToast('Logged out successfully', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                }
+            }
+        };
+
+        // Search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('jobSearch');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                if (searchTerm.trim() === '') {
+                    renderAvailableJobs();
+                } else {
+                    const filteredJobs = appState.availableJobs.filter(job => {
+                        const clientName = (job.clientName || '').toLowerCase();
+                        const serviceType = (job.serviceType || '').toLowerCase();
+                        const location = (job.location || '').toLowerCase();
+                        const description = (job.description || '').toLowerCase();
+                        
+                        return clientName.includes(searchTerm) ||
+                               serviceType.includes(searchTerm) ||
+                               location.includes(searchTerm) ||
+                               description.includes(searchTerm);
+                    });
+                    
+                    const container = document.getElementById('availableJobsTable');
+                    if (filteredJobs.length === 0) {
+                        container.innerHTML = `
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px;">
+                                    <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                                    <h4 style="color: var(--text-light); margin-bottom: 10px;">No jobs found</h4>
+                                    <p style="color: var(--text-light); font-size: 0.9rem;">No jobs match your search criteria</p>
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        container.innerHTML = filteredJobs.map(job => {
+                            const clientName = job.clientName || 'Client';
+                            const serviceType = job.serviceType || 'Senior Care';
+                            const location = job.location || 'Location not specified';
+                            const schedule = job.schedule || 'Flexible schedule';
+                            const payRate = job.payRate || job.hourlyRate || '20';
+                            
+                            return `
+                                <tr>
+                                    <td>
+                                        <div class="job-client">
+                                            <div class="client-avatar">${getInitials(clientName)}</div>
+                                            <div class="client-info">
+                                                <h4>${clientName}</h4>
+                                                <p>${location}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>${serviceType}</td>
+                                    <td>
+                                        <div style="font-size: 0.85rem;">
+                                            <div><strong>${schedule}</strong></div>
+                                            <div style="color: var(--text-light);">${job.startTime || 'Flexible hours'}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="job-pay-rate">
+                                            $${payRate}<span>/hr</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="job-actions">
+                                            <button class="btn-action btn-view" onclick="showJobDetails('${job._id}')">
+                                                <i class="fas fa-eye"></i> Details
+                                            </button>
+                                            ${!hasAppliedToJob(job._id) ? `
+                                            <button class="btn-action btn-apply" onclick="applyForJob('${job._id}')">
+                                                <i class="fas fa-paper-plane"></i> Apply
+                                            </button>
+                                            ` : `
+                                            <button class="btn-action" style="background: #6c757d; color: white;" disabled>
+                                                <i class="fas fa-check"></i> Applied
+                                            </button>
+                                            `}
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            });
+        }
+
+        // Sample data for testing
+        function getSampleJobs() {
+            return [
+                {
+                    _id: 'job1',
+                    clientid: 'client123',
+                    clientName: 'Mary Johnson',
+                    location: 'Brooklyn, NY',
+                    serviceType: 'Companionship Care',
+                    description: 'Looking for a compassionate caregiver to provide companionship and light housekeeping for an elderly lady.',
+                    schedule: 'Mon-Fri, 9 AM - 1 PM',
+                    startTime: '9:00 AM',
+                    payRate: '25',
+                    days: 'Monday to Friday',
+                    careNeeds: 'Companionship, light housekeeping',
+                    requirements: 'First Aid Certified, CPR, Dementia Care'
+                },
+                {
+                    _id: 'job2',
+                    clientid: 'client456',
+                    clientName: 'Robert Smith',
+                    location: 'Manhattan, NY',
+                    serviceType: 'Personal Care Assistance',
+                    description: 'Assistance with daily activities including bathing, dressing, and medication management.',
+                    schedule: 'Daily, 8 AM - 12 PM',
+                    startTime: '8:00 AM',
+                    payRate: '28',
+                    days: 'Everyday',
+                    careNeeds: 'Personal care, medication management',
+                    requirements: 'Personal Care Experience, Medication Management'
+                }
+            ];
+        }
+
+        function getSampleApplications() {
+            return [
+                {
+                    _id: 'app1',
+                    jobId: 'job1',
+                    jobTitle: 'Companionship Care',
+                    clientName: 'Mary Johnson',
+                    payRate: '25',
+                    status: 'pending',
+                    applicationDate: '2024-01-10T10:30:00'
+                }
+            ];
+        }
+
+        function loadSampleData() {
+            appState.availableJobs = getSampleJobs();
+            appState.myApplications = getSampleApplications();
+            appState.profileData = {
+                fullName: 'Sarah Johnson',
+                email: 'sarah@seniorstar.com',
+                phone: '+1 (555) 123-4567',
+                location: 'New York, NY',
+                skills: ['First Aid', 'CPR', 'Dementia Care', 'Medication Management'],
+                hourlyRate: '25'
+            };
+            renderAvailableJobs();
+            renderMyApplications();
+            updateProfileUI();
+            updateStats();
+        }
+
+        // Event Listeners
+        document.getElementById('profileBtn').onclick = () => {
+            document.getElementById('profileDropdown').classList.toggle('active');
+        };
+
+        document.getElementById('menuToggle').onclick = () => { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('sidebarOverlay').classList.toggle('active'); 
+        };
+
+        document.getElementById('sidebarOverlay').onclick = closeSidebar;
+        document.getElementById('closeModal').onclick = closeJobModal;
+        document.getElementById('jobModal').onclick = function(e) {
+            if (e.target === this) closeJobModal();
+        };
+        
+        document.getElementById('profileModal').onclick = function(e) {
+            if (e.target === this) closeProfileModal();
+        };
+        
+        document.getElementById('profileForm').onsubmit = saveProfile;
+
+        // Sidebar item click handlers
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const page = this.getAttribute('data-page');
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Handle different pages
+                if (page === 'jobs') {
+                    loadAvailableJobs();
+                } else if (page === 'applications') {
+                    loadMyApplications();
+                } else if (page !== 'dashboard') {
+                    showToast(`${this.querySelector('span').textContent} page coming soon!`, 'info');
+                }
+                
+                closeSidebar();
+            });
+        });
+
+        // Close profile dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#profileBtn') && !e.target.closest('#profileDropdown')) {
+                document.getElementById('profileDropdown').classList.remove('active');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSession();
+            setupSearch();
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + K for search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('jobSearch').focus();
+                }
+                // Escape key closes modals
+                if (e.key === 'Escape') {
+                    closeJobModal();
+                    closeProfileModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

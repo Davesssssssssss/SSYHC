@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compassionate Care | Professional Caregiver Services</title>
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Lora:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. VARIABLES & RESET --- */
+        :root {
+            /* THEME: Light Yellow / Sunny / Cheerful */
+            --primary: #FBC02D;        
+            --primary-bright: #FDD835; 
+            --primary-light: #FFF9C4;  
+            --primary-dark: #F57F17;   
+            --accent: #2E7D32;         
+            --bg-body: #FFFDE7;
+            --bg-soft: #FFF59D;
+            --text-main: #424242;
+            --text-light: #616161;
+            --white: #ffffff;
+            
+            --radius-sm: 12px;
+            --radius-md: 24px;
+            --shadow-sm: 0 4px 6px -1px rgba(251, 192, 45, 0.15);
+            --shadow-lg: 0 20px 25px -5px rgba(251, 192, 45, 0.25), 0 8px 10px -6px rgba(251, 192, 45, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Lora', serif;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+        
+        h1 strong, h2 strong { color: var(--primary-dark); }
+
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; height: auto; }
+        input, select, textarea { font-family: inherit; }
+
+        /* --- 2. UTILITY CLASSES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-padding { padding: 100px 0; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-bright) 0%, var(--primary) 100%);
+            color: #3e2723;
+            box-shadow: 0 10px 20px rgba(251, 192, 45, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(251, 192, 45, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-dark);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #3e2723;
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(251, 192, 45, 0.2);
+        }
+
+        /* Animation classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 3. HEADER & NAV --- */
+        .navbar {
+            padding: 15px 0; /* Reduced padding slightly for better logo fit */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 253, 231, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(251, 192, 45, 0.2);
+            transition: 0.3s;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* LOGO STYLES (UPDATED FOR RESPONSIVENESS) */
+        .logo {
+            display: flex;
+            align-items: center;
+            z-index: 1002; /* Ensures logo stays on top */
+        }
+
+        .logo img {
+            height: 80px; /* Desktop Height */
+            width: auto;
+            object-fit: contain;
+            transition: height 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .nav-links a:not(.btn)::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+        .nav-links a:not(.btn):hover::after { width: 100%; }
+
+        .hamburger { display: none; cursor: pointer; color: var(--text-main); font-size: 1.5rem; }
+
+        /* --- 4. HERO SECTION --- */
+        .hero {
+            padding: 160px 0 100px;
+            background: radial-gradient(circle at 90% 10%, #FFF59D 0%, transparent 45%),
+                        radial-gradient(circle at 10% 90%, #FFF9C4 0%, transparent 45%);
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 24px;
+            color: var(--text-main);
+        }
+        
+        .hero-text h1 span { color: var(--primary-dark); }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            max-width: 520px;
+        }
+
+        .trust-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #FFFDE7;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            border: 1px solid var(--primary);
+        }
+
+        .hero-buttons { display: flex; flex-wrap: wrap; gap: 16px; }
+
+        .hero-image-wrapper { position: relative; }
+
+        .hero-image img {
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            object-fit: cover;
+            animation: morph 8s ease-in-out infinite;
+            z-index: 2;
+            position: relative;
+        }
+
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            50% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        }
+
+        /* --- 5. SERVICES --- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 16px; position: relative; display: inline-block; color: var(--text-main); }
+        .section-header p { color: var(--text-light); font-size: 1.15rem; }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: var(--radius-md);
+            border: 1px solid #FFF59D; 
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 0%; height: 100%;
+            background: #FFF9C4;
+            z-index: -1;
+            transition: 0.4s ease;
+        }
+
+        .service-card:hover::before { width: 100%; }
+        .service-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: transparent; }
+
+        .icon-box {
+            width: 70px; height: 70px;
+            background: #FFF9C4;
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .service-card:hover .icon-box { background: var(--primary); color: var(--white); }
+
+        /* --- 6. ABOUT --- */
+        .about { background-color: var(--white); }
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .about-img-group { position: relative; }
+        .main-img {
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .exp-card {
+            position: absolute;
+            bottom: -30px; right: -20px;
+            background: #FFFDE7;
+            padding: 24px 32px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            display: flex; gap: 16px; align-items: center;
+            border-left: 5px solid var(--primary);
+        }
+        .exp-number { font-size: 2.5rem; font-weight: 700; color: var(--primary-dark); font-family: 'Lora', serif; line-height: 1; }
+        .exp-text { font-size: 0.9rem; font-weight: 700; color: var(--text-main); line-height: 1.3; }
+
+        .about-text ul {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 32px 0;
+        }
+
+        .about-text li { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .about-text li i { color: var(--primary-dark); background: #FFF9C4; padding: 6px; border-radius: 50%; font-size: 0.8rem; }
+
+        /* --- 7. TESTIMONIALS --- */
+        .testimonials { background: #FFF9C4; }
+        .testi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .testi-card {
+            background: var(--white);
+            padding: 48px 32px 32px;
+            border-radius: 24px 24px 24px 0;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: 20px; left: 24px;
+            font-size: 4rem;
+            color: rgba(251, 192, 45, 0.3); 
+            font-family: serif;
+            line-height: 1;
+        }
+
+        .testi-text { position: relative; z-index: 2; margin-bottom: 24px; font-style: italic; color: #4a5568; }
+        
+        .user-profile { display: flex; align-items: center; gap: 16px; }
+        .user-img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #FFF59D; }
+        .user-details h5 { font-size: 1.1rem; margin-bottom: 2px; }
+        .user-details span { font-size: 0.9rem; color: var(--primary-dark); font-weight: 500; }
+
+        /* --- 8. CONTACT --- */
+        .contact-wrapper {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .contact-info {
+            flex: 1;
+            padding: 60px;
+            color: var(--white);
+            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+        }
+        
+        .contact-info h2 { color: var(--white); margin-bottom: 16px; }
+        .contact-info p { opacity: 0.95; margin-bottom: 40px; font-size: 1.1rem; }
+
+        .info-item { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 30px; }
+        .info-item i { background: rgba(255,255,255,0.25); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--white); font-size: 1.2rem; }
+        .info-content h5 { font-size: 1.1rem; margin-bottom: 4px; font-family: 'DM Sans', sans-serif; }
+        .info-content span { opacity: 0.95; font-size: 0.95rem; }
+
+        .contact-form {
+            flex: 1.2;
+            background: #FFFDE7;
+            padding: 60px;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: var(--text-main); }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #FFF59D;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(251, 192, 45, 0.2);
+        }
+
+        /* --- 9. FOOTER --- */
+        footer { background: #FFF9C4; padding: 60px 0 30px; border-top: 1px solid #FFF176; }
+        .footer-content { text-align: center; }
+        .social-links { margin: 24px 0; display: flex; justify-content: center; gap: 16px; }
+        .social-links a {
+            width: 44px; height: 44px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary-dark);
+            border: 1px solid #FFF59D;
+            transition: var(--transition);
+        }
+        .social-links a:hover { background: var(--primary); color: var(--white); transform: translateY(-3px); }
+        .copyright { color: var(--text-light); font-size: 0.9rem; }
+
+        /* --- 10. RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 992px) {
+            .hero-content { grid-template-columns: 1fr; text-align: center; }
+            .hero-buttons { justify-content: center; }
+            .hero-image-wrapper { width: 80%; margin: 40px auto 0; }
+            .about-container { grid-template-columns: 1fr; }
+            .about-img-group { width: 90%; margin: 0 auto 40px; }
+            .contact-wrapper { flex-direction: column; }
+            .contact-info, .contact-form { padding: 40px; }
+        }
+
+        @media (max-width: 768px) {
+            .section-padding { padding: 60px 0; }
+            .hamburger { display: block; z-index: 1001; }
+            
+            /* Responsive Logo Adjustment */
+            .logo img {
+                height: 50px; /* Smaller height for mobile */
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0; right: 0;
+                width: 100%; height: 100vh;
+                background: #FFFDE7;
+                flex-direction: column;
+                justify-content: center;
+                transform: translateX(100%);
+                transition: transform 0.4s ease-in-out;
+                z-index: 1000;
+            }
+            .nav-links.active { transform: translateX(0); }
+            .nav-links a { font-size: 1.5rem; color: var(--text-main); }
+            
+            .form-grid { grid-template-columns: 1fr; }
+            .exp-card { right: 0; bottom: -20px; padding: 15px 20px; }
+            .exp-number { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 { font-size: 2.2rem; }
+            .btn { width: 100%; }
+            .contact-info, .contact-form { padding: 30px 20px; }
+            .about-text ul { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <img src="https://static.wixstatic.com/media/7339e9_c69fdd02462d47f58df76b3c64ddd811~mv2.png" alt="CareGiver+ Logo">
+            </a>
+            <div class="nav-links">
+                <a href="#services">Services</a>
+                <a href="#about">About</a>
+                <a href="#reviews">Stories</a>
+                <a href="#contact" class="btn btn-primary">Book Consultation</a>
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="container hero-content">
+            <div class="hero-text reveal">
+                <div class="trust-badge">
+                    <i class="fas fa-check-circle"></i> #1 Trusted Care Service
+                </div>
+                <h1>Brightening Lives,<br><span>Every Single Day.</span></h1>
+                <p>Professional, loving support designed to help your family members thrive at home. Let us bring the sunshine back into your life.</p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary">Find a Caregiver <i class="fas fa-arrow-right" style="margin-left:8px;"></i></a>
+                    <a href="#about" class="btn btn-outline">How It Works</a>
+                </div>
+            </div>
+            <div class="hero-image-wrapper reveal">
+                <div class="hero-image">
+                    <img src="https://static.wixstatic.com/media/7339e9_948764042273493b8f41fc9a0b581efd~mv2.png">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SERVICES -->
+    <section id="services" class="section-padding">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Our Services</h2>
+                <p>Comprehensive care solutions for every stage of life and every home need.</p>
+            </div>
+            <div class="services-grid">
+                
+                <!-- 1. Adult Care -->
+                <div class="service-card reveal">
+                    <div class="icon-box"><i class="fas fa-user-nurse"></i></div>
+                    <h3>Adult Care</h3>
+                    <p>Compassionate support for adults recovering from illness or living with disabilities, ensuring independence and dignity.</p>
+                </div>
+
+                <!-- 2. Senior Care -->
+                <div class="service-card reveal">
+                    <div class="icon-box"><i class="fas fa-glasses"></i></div>
+                    <h3>Senior Care</h3>
+                    <p>Dedicated elderly companionship, medication reminders, and daily assistance to help seniors age comfortably at home.</p>
+                </div>
+
+                <!-- 3. Child Care -->
+                <div class="service-card reveal">
+                    <div class="icon-box"><i class="fas fa-child"></i></div>
+                    <h3>Child Care</h3>
+                    <p>Trustworthy nannies and babysitters providing a safe, fun, and nurturing environment for your little ones.</p>
+                </div>
+
+                <!-- 4. Tutoring -->
+                <div class="service-card reveal">
+                    <div class="icon-box"><i class="fas fa-book-open"></i></div>
+                    <h3>Tutoring</h3>
+                    <p>Educational support and homework assistance to help children and adults achieve their academic learning goals.</p>
+                </div>
+
+                <!-- 5. Housekeeping -->
+                <div class="service-card reveal">
+                    <div class="icon-box"><i class="fas fa-broom"></i></div>
+                    <h3>Housekeeping</h3>
+                    <p>Professional cleaning, meal preparation, and organization services to keep your home tidy, comfortable, and safe.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="about section-padding">
+        <div class="container about-container">
+            <div class="about-img-group reveal">
+                <img src="https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="main-img" alt="Nurse holding hand">
+                <div class="exp-card">
+                    <div class="exp-number">15+</div>
+                    <div class="exp-text">Years of<br>Excellence</div>
+                </div>
+            </div>
+            <div class="about-text reveal">
+                <h2>More Than Just a Service,<br>We're Family.</h2>
+                <p>We believe that caregiving is a calling. Our rigorous vetting process ensures that only the most compassionate and skilled individuals enter your home.</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> Licensed & Insured Staff</li>
+                    <li><i class="fas fa-check"></i> 24/7 Support Line</li>
+                    <li><i class="fas fa-check"></i> Personalized Care Plans</li>
+                    <li><i class="fas fa-check"></i> Daily Health Updates</li>
+                </ul>
+                <a href="#contact" class="btn btn-primary">Meet Our Team</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="reviews" class="testimonials section-padding">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Stories of Love</h2>
+                <p>Don't just take our word for it. Here is what families are saying about CareGiver+.</p>
+            </div>
+            <div class="testi-grid">
+                <div class="testi-card reveal">
+                    <div class="quote-icon">“</div>
+                    <p class="testi-text">The caregiver you sent, Maria, is an absolute angel. She treats my mother with such respect and kindness. I can finally focus on my work knowing Mom is safe.</p>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="user-img" alt="Client">
+                        <div class="user-details">
+                            <h5>Sarah Jenkins</h5>
+                            <span>Daughter</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testi-card reveal">
+                    <div class="quote-icon">“</div>
+                    <p class="testi-text">I was skeptical about home care, but your team's professionalism won me over. The communication app makes it so easy to see how Dad's day went.</p>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="user-img" alt="Client">
+                        <div class="user-details">
+                            <h5>Mark Thompson</h5>
+                            <span>Client</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testi-card reveal">
+                    <div class="quote-icon">“</div>
+                    <p class="testi-text">The post-surgery care was exceptional. The nurse was knowledgeable and helped me get back on my feet weeks earlier than expected.</p>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="user-img" alt="Client">
+                        <div class="user-details">
+                            <h5>Emily R.</h5>
+                            <span>Patient</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section-padding" style="background: var(--white);">
+        <div class="container">
+            <div class="contact-wrapper reveal">
+                <!-- Info Side -->
+                <div class="contact-info">
+                    <h2>Start Your Care Journey</h2>
+                    <p>Schedule a free, no-obligation home assessment. We'll answer your questions and build a plan that fits.</p>
+                    
+                    <div class="info-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <div class="info-content">
+                            <h5>Call Anytime</h5>
+                            <span>(555) 123-4567</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div class="info-content">
+                            <h5>Email Us</h5>
+                            <span>hello@caregiverplus.com</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="info-content">
+                            <h5>Visit Us</h5>
+                            <span>123 Wellness Blvd, Care City</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Side -->
+                <div class="contact-form">
+                    <form>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" class="form-control" placeholder="John">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" placeholder="Doe">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" class="form-control" placeholder="(555) 000-0000">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Care Service Needed</label>
+                            <select class="form-control">
+                                <option>Adult Care</option>
+                                <option>Senior Care</option>
+                                <option>Child Care</option>
+                                <option>Tutoring</option>
+                                <option>Housekeeping</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea class="form-control" rows="3" placeholder="Tell us about your needs..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Get Free Consultation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container footer-content">
+            <a href="#" class="logo" style="justify-content: center;">
+                <img src="https://static.wixstatic.com/media/7339e9_c69fdd02462d47f58df76b3c64ddd811~mv2.png" alt="CareGiver+ Logo" style="height: 60px;">
+            </a>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <p class="copyright">&copy; 2025 CareGiver+. All rights reserved. <br> Designed with <i class="fas fa-heart" style="color: var(--primary-dark);"></i> for families.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // 1. Mobile Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const links = document.querySelectorAll('.nav-links a');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.querySelector('i').classList.toggle('fa-times'); // Change icon to X
+            hamburger.querySelector('i').classList.toggle('fa-bars');
+        });
+
+        // Close menu when clicking a link
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.querySelector('i').classList.add('fa-bars');
+                hamburger.querySelector('i').classList.remove('fa-times');
+            });
+        });
+
+        // 2. Scroll Reveal Animation
+        window.addEventListener('scroll', reveal);
+
+        function reveal() {
+            var reveals = document.querySelectorAll('.reveal');
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var revealTop = reveals[i].getBoundingClientRect().top;
+                var revealPoint = 100;
+
+                if (revealTop < windowHeight - revealPoint) {
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+        
+        // Trigger once on load
+        reveal();
+    </script>
+</body>
+</html>

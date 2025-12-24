@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Clients</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        /* Your existing CSS for the table and pagination */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 960px;
+            margin-top: -350px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            color: #333;
+            margin: 0;
+        }
+
+        .add-client-button {
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .add-client-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .add-client-button .material-icons {
+            font-size: 18px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead th {
+            background: linear-gradient(to right, #ffad6a, #ff7f50);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        tbody td {
+            padding: 15px;
+            color: #555;
+        }
+
+        .update-button {
+            background: linear-gradient(to right, #ffc04c, #ff9800);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease-in-out;
+        }
+
+        .update-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .delete-button {
+            background: linear-gradient(to right, #ff7b7b, #e00000);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease-in-out;
+        }
+
+        .delete-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            color: #777;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .pagination .material-icons {
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+        }
+
+        .pagination .material-icons.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .pagination .material-icons:not(.disabled):hover {
+            color: #555;
+        }
+
+        /* --- Modal Specific CSS --- */
+        .swal2-popup {
+            padding: 2em;
+            /* Potentially adjust max-width if needed for content */
+            max-width: 600px; /* Example: making modal slightly wider if fields are long */
+        }
+        .swal2-container .swal2-title {
+            font-size: 1.8em;
+            margin-bottom: 1em;
+        }
+        .swal2-container .swal2-input-group label {
+            display: block;
+            text-align: left;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+            color: #555;
+            margin-left: 20px;
+        }
+        .swal2-container .swal2-input {
+            width: 100%; /* Ensure inputs take full width */
+            padding: 0.8em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+           
+        }
+        /* New styles to prevent internal scroll within SweetAlert2's HTML container */
+        .swal2-html-container {
+            overflow: hidden !important; /* Hide internal scrollbars */
+            padding: 0 0.5em !important; /* Adjust horizontal padding if necessary */
+        }
+        .swal2-actions button {
+            padding: 0.8em 1.5em !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            font-size: 1em !important;
+            margin: 0 0.5em !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+        }
+        .swal2-confirm {
+            background: linear-gradient(to right, #6dd5ed, #2193b0) !important;
+            color: white !important;
+        }
+        .swal2-cancel {
+            background-color: #f0f0f0 !important;
+            color: #555 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>LIST OF STAFF</h1>
+            <button class="add-client-button" id="add-client-button">
+                <span class="material-icons">add</span> ADD NEW STAFF
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>FIRST-NAME</th>
+                        <th>LAST-NAME</th>
+                        <th>CONTACTS</th>
+                        <th>EMAIL</th>
+
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="client-table-body">
+                    <!-- Client data will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <span class="material-icons" id="prev-page">chevron_left</span>
+            <span id="pagination-info">Page 1 of 1</span>
+            <span class="material-icons" id="next-page">chevron_right</span>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // --- Frontend (iframe) JavaScript for pagination and communication ---
+
+        let currentPage = 1;
+        let totalPages = 1;
+        // const clientsPerPage = 5; // This is defined in the backend, not strictly needed here for calculation
+
+        // Function to send messages to the Wix Velo parent page
+        function sendActionToWix(action, data) {
+            window.parent.postMessage({ action, data }, "*"); // Use your actual Wix domain in production
+        }
+
+        // Function to populate the HTML table with client data
+        function populateTable(clients) {
+            const tbody = document.getElementById('client-table-body');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            if (!clients || clients.length === 0) {
+                const row = tbody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 6;
+                cell.textContent = "No clients found.";
+                cell.style.textAlign = "center";
+                cell.style.padding = "20px";
+                return;
+            }
+
+            clients.forEach(client => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = client.userid || 'N/A';
+                row.insertCell().textContent = client.firstname  || 'N/A';
+                 row.insertCell().textContent = client.lastname  || 'N/A';
+                row.insertCell().textContent = client.phone || 'N/A';
+                row.insertCell().textContent = client.email || 'N/A';
+
+
+                const actionCell = row.insertCell();
+
+                const updateButton = document.createElement('button');
+                updateButton.className = 'update-button';
+                updateButton.textContent = 'UPDATE';
+                updateButton.onclick = () => openClientModal(client); // Open modal for update
+                actionCell.appendChild(updateButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-button';
+                deleteButton.textContent = 'DELETE';
+                deleteButton.onclick = () => confirmDeleteClient(client); // SweetAlert for delete
+                actionCell.appendChild(deleteButton);
+            });
+        }
+
+        // Function to update pagination UI
+        function updatePaginationUI() {
+            document.getElementById('pagination-info').textContent = `Page ${currentPage} of ${totalPages}`;
+
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+
+            if (currentPage <= 1) {
+                prevButton.classList.add('disabled');
+            } else {
+                prevButton.classList.remove('disabled');
+            }
+
+            if (currentPage >= totalPages) {
+                nextButton.classList.add('disabled');
+            } else {
+                nextButton.classList.remove('disabled');
+            }
+        }
+
+        // Event listeners for pagination buttons
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                sendActionToWix('loadPage', { page: currentPage });
+            }
+        });
+
+        document.getElementById('next-page').addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                sendActionToWix('loadPage', { page: currentPage });
+            }
+        });
+
+        // Listen for messages from the Wix Velo parent page
+        window.onmessage = (event) => {
+            console.log("Message received in iframe:", event.data);
+            if (event.data.action === "loadClients") {
+                populateTable(event.data.items);
+                currentPage = event.data.currentPage;
+                totalPages = event.data.totalPages;
+                updatePaginationUI();
+                if (event.data.successMessage) {
+                    Swal.fire('Success!', event.data.successMessage, 'success');
+                }
+            } else if (event.data.error) {
+                console.error("Error from Wix Velo:", event.data.error);
+                Swal.fire('Error!', event.data.error, 'error');
+            }
+        };
+
+        // --- SweetAlert2 Modals and Confirmations ---
+
+        // Function to open the Add/Update Client Modal
+        async function openClientModal(client = null) {
+            const isUpdate = client !== null;
+            const title = isUpdate ? 'Update Client' : 'Add New Client';
+            const confirmButtonText = isUpdate ? 'Update' : 'Add Client';
+
+            const { value: formValues } = await Swal.fire({
+                title: title,
+                html:
+                    `<div class="swal2-input-group">
+                        <label for="swal-input-fname">First-name:</label>
+                        <input id="swal-input-fname" class="swal2-input" placeholder="First-Name" value="${client?.firstname  || ''}">
+                    </div>
+                    <div class="swal2-input-group">
+                        <label for="swal-input-lname">Last-name:</label>
+                        <input id="swal-input-lname" class="swal2-input" placeholder="Last-Name" value="${ client?.lastname || ''}">
+                    </div>
+                    <div class="swal2-input-group">
+                        <label for="swal-input-contacts">Contacts:</label>
+                        <input id="swal-input-contacts" class="swal2-input" placeholder="e.g., 555-1234" value="${client?.phone || ''}">
+                    </div>
+                    <div class="swal2-input-group">
+                        <label for="swal-input-email">Email:</label>
+                        <input id="swal-input-email" class="swal2-input" type="email" placeholder="client@example.com" value="${client?.email || ''}">
+                    </div>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: confirmButtonText,
+                preConfirm: () => {
+                    const  firstname = Swal.getPopup().querySelector('#swal-input-fname').value;
+                     const lastname = Swal.getPopup().querySelector('#swal-input-lname').value;
+                    const phone = Swal.getPopup().querySelector('#swal-input-contacts').value;
+                    const email = Swal.getPopup().querySelector('#swal-input-email').value;
+                    let password = lastname
+                    let user_role = "STAFF"
+
+                    return { firstname,lastname, phone, email,password,user_role };
+                }
+            });
+
+            if (formValues) {
+                if (isUpdate) {
+                    const updatedClient = {
+                        ...client, // Keep existing _id and other fields
+                        firstname: formValues.firstname, // Corrected to firstname
+                        lastname: formValues.lastname,   // Corrected to lastname
+                        phone: formValues.phone,
+                        email: formValues.email,
+                        password: formValues.lastname,
+                        user_role: "STAFF"
+                    };
+                    sendActionToWix('updateClient', { ...updatedClient, currentPage });
+                } else {
+                    sendActionToWix('createClient', formValues);
+                }
+            }
+        }
+
+        // SweetAlert2 confirmation for deleting a client
+        async function confirmDeleteClient(client) {
+            const { isConfirmed } = await Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to delete client: ${client.firstname || ''} ${client.lastname || ''}. This action cannot be undone!`, /* Updated client.fullName to firstname/lastname */
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e00000', // Red color for delete
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (isConfirmed) {
+                sendActionToWix('deleteClient', { _id: client._id, currentPage });
+            }
+        }
+
+        // Event listener for the "ADD NEW CLIENT" button (now opens modal)
+        document.getElementById('add-client-button').addEventListener('click', () => openClientModal());
+
+        // Initial update of pagination UI in case of empty table on first load
+        updatePaginationUI();
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Posted</title>
+  <style>
+    body {
+      background-color: #fef6e9;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      padding: 40px 20px;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .search-container {
+      position: relative;
+      width: 60%;
+      max-width: 600px;
+      margin: 20px auto 40px;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 14px 45px 14px 20px;
+      font-size: 16px;
+      border: 2px solid #f6b26b;
+      border-radius: 25px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: #333;
+    }
+
+    .jobs-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .job-card {
+      background: white;
+      border: 2px solid #f6b26b;
+      border-radius: 8px;
+      width: 250px;
+      padding: 15px;
+      text-align: left;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .job-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .job-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .job-description {
+      font-size: 14px;
+      color: #333;
+    }
+
+    iframe.map {
+      width: 100%;
+      height: 150px;
+      border: 0;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .job-location {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .job-location::before {
+      content: "📍";
+      margin-right: 5px;
+    }
+
+    .pagination {
+      margin-top: 30px;
+    }
+
+    .pagination button {
+      background-color: #f6b26b;
+      border: none;
+      padding: 10px 15px;
+      margin: 0 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+    }
+
+    .pagination .page-btn {
+      background-color: #ffd699;
+    }
+
+    .pagination button:hover {
+      background-color: #f4a261;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>JOB POSTED</h1>
+
+    <div class="search-container">
+      <input type="text" id="search" placeholder="Search jobs..." oninput="filterJobs()">
+      <span class="search-icon">🔍</span>
+    </div>
+
+    <div class="jobs-container" id="jobs-container">
+      <!-- Job cards will be inserted here -->
+    </div>
+
+    <div class="pagination">
+      <button onclick="prevPage()">&#10094;</button>
+      <button onclick="goToPage(1)" class="page-btn">1</button>
+      <button onclick="goToPage(2)" class="page-btn">2</button>
+      <button onclick="goToPage(3)" class="page-btn">3</button>
+      <button onclick="nextPage()">&#10095;</button>
+    </div>
+  </div>
+
+  <script>
+    let jobsData = [];
+    let filteredJobs = [];
+    let currentPage = 1;
+    const itemsPerPage = 3;
+
+    function renderJobs() {
+      const jobsContainer = document.getElementById("jobs-container");
+      jobsContainer.innerHTML = "";
+
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const jobsToShow = filteredJobs.slice(start, end);
+
+      jobsToShow.forEach(job => {
+        const mapQuery = encodeURIComponent(job.location || "");
+        const iframeURL = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
+
+        const jobCard = document.createElement("div");
+        jobCard.className = "job-card";
+        jobCard.innerHTML = `
+          <div class="job-title">${job.job_title || "No Title"}</div>
+          <div class="job-description">${job.job_description || ""}</div>
+          <iframe class="map" src="${iframeURL}" loading="lazy"></iframe>
+          <div class="job-location">${job.location || ""}</div>
+        `;
+        jobsContainer.appendChild(jobCard);
+      });
+    }
+
+    function goToPage(page) {
+      const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderJobs();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderJobs();
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderJobs();
+      }
+    }
+
+    function filterJobs() {
+      const query = document.getElementById("search").value.toLowerCase();
+      filteredJobs = jobsData.filter(job =>
+        (job.job_title || "").toLowerCase().includes(query) ||
+        (job.job_description || "").toLowerCase().includes(query) ||
+        (job.location || "").toLowerCase().includes(query)
+      );
+      currentPage = 1;
+      renderJobs();
+    }
+
+    // Listen for messages from Wix
+    window.onmessage = function(event) {
+      if (!event.data || !event.data.action) return;
+
+      const { action, items } = event.data;
+      if (action === "load") {
+        jobsData = items || [];
+        filteredJobs = [...jobsData];
+        renderJobs();
+      }
+    };
+
+    // Optional: request data on load
+    window.onload = function () {
+      // parent.postMessage({ action: "requestData" }, "*");
+    };
+  </script>
+</body>
+</html>

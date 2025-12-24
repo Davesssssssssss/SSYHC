@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitality Care - 3D Landing Page</title>
+    
+    <!-- Modern Icons Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+        }
+
+        /* 3D Container behind everything */
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at 70% 50%, #e0f2f1, #ffffff);
+        }
+
+        /* --- UI Overlay --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%;
+            position: absolute; width: 100%; top: 0; z-index: 10;
+        }
+        .logo { font-weight: 800; font-size: 1.5rem; color: #00796b; letter-spacing: -1px; }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+        }
+
+        .hero-content {
+            width: 45%;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem; color: #263238; line-height: 1.1; margin-bottom: 20px;
+        }
+        h1 span { color: #009688; }
+        
+        p { font-size: 1.1rem; color: #546e7a; margin-bottom: 30px; line-height: 1.6; }
+
+        .btn {
+            padding: 15px 35px;
+            background: #009688;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,150,136,0.3);
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-3px); background: #00796b; }
+
+        /* Modern Services Grid */
+        .services-overlay {
+            position: absolute;
+            bottom: 50px;
+            left: 5%;
+            right: 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            z-index: 2;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .service-card:hover { transform: translateY(-5px); }
+
+        .icon-box {
+            width: 50px; height: 50px;
+            background: #e0f2f1;
+            color: #009688;
+            border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .service-info h4 { margin: 0; color: #333; font-size: 1rem; }
+        .service-info span { font-size: 0.8rem; color: #777; }
+
+        /* Mobile Fix */
+        @media (max-width: 768px) {
+            .hero { flex-direction: column; justify-content: center; text-align: center; }
+            .hero-content { width: 100%; margin-bottom: 200px; }
+            .services-overlay { display: none; } /* Hide cards on small mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <nav>
+        <div class="logo"><i class="fas fa-heartbeat"></i> VitalityCare.</div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Expert Care <br><span>Right at Home.</span></h1>
+            <p>We provide professional caregiving services that prioritize dignity, safety, and companionship for your loved ones.</p>
+            <button class="btn">Book Consultation</button>
+        </div>
+    </div>
+
+    <div class="services-overlay">
+        <div class="service-card">
+            <div class="icon-box"><i class="fas fa-user-nurse"></i></div>
+            <div class="service-info">
+                <h4>Nursing</h4>
+                <span>Licensed Care</span>
+            </div>
+        </div>
+        <div class="service-card">
+            <div class="icon-box"><i class="fas fa-hand-holding-heart"></i></div>
+            <div class="service-info">
+                <h4>Assistance</h4>
+                <span>Daily Support</span>
+            </div>
+        </div>
+        <div class="service-card">
+            <div class="icon-box"><i class="fas fa-notes-medical"></i></div>
+            <div class="service-info">
+                <h4>Therapy</h4>
+                <span>Rehabilitation</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // 1. SCENE SETUP
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // 2. GENERATE CAREGIVER TEXTURE (Solves the "No Image" problem)
+        // This function paints a simple nurse character onto a canvas element in memory
+        function createCaregiverTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            // Clear
+            ctx.clearRect(0, 0, 512, 1024);
+
+            // Draw Body (Teal Uniform)
+            ctx.fillStyle = "#009688";
+            ctx.beginPath();
+            ctx.moveTo(100, 1000); // Bottom Left
+            ctx.lineTo(412, 1000); // Bottom Right
+            ctx.lineTo(350, 400);  // Shoulder Right
+            ctx.lineTo(162, 400);  // Shoulder Left
+            ctx.fill();
+
+            // Draw Head (Skin Tone)
+            ctx.fillStyle = "#FFCCAA";
+            ctx.beginPath();
+            ctx.arc(256, 280, 130, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Hair (Dark)
+            ctx.fillStyle = "#3E2723";
+            ctx.beginPath();
+            ctx.arc(256, 260, 140, Math.PI, 0); // Semicircle top
+            ctx.fill();
+
+            // Draw Medical Cross on Uniform
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(256, 600, 60, 0, Math.PI * 2); // Badge Circle
+            ctx.fill();
+            
+            ctx.fillStyle = "#FF5252"; // Red Cross
+            ctx.fillRect(236, 550, 40, 100); // Vertical
+            ctx.fillRect(206, 580, 100, 40); // Horizontal
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // 3. CREATE THE 3D OBJECT
+        // We use a Plane (flat card) to display the image
+        const geometry = new THREE.PlaneGeometry(3.5, 7); // Width, Height
+        const material = new THREE.MeshBasicMaterial({ 
+            map: createCaregiverTexture(), // Use the generated texture
+            transparent: true,
+            side: THREE.DoubleSide
+        });
+        const caregiver = new THREE.Mesh(geometry, material);
+        scene.add(caregiver);
+
+        // 4. ANIMATION VARIABLES
+        // Start Position (Off-screen Left)
+        caregiver.position.x = -10; 
+        caregiver.position.y = -1;
+        caregiver.position.z = 0;
+
+        // Target Position (Center-Right)
+        let targetX = 2.5; 
+        if (window.innerWidth < 768) targetX = 0; // Center on mobile
+
+        // Mouse Interaction
+        let mouseX = 0;
+        let mouseY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // 5. ANIMATION LOOP
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // A. Slide from Left to Center (Lerp)
+            // The 0.03 determines the speed (lower is smoother/slower)
+            caregiver.position.x += (targetX - caregiver.position.x) * 0.03;
+
+            // B. Subtle Floating
+            caregiver.position.y = -1 + Math.sin(Date.now() * 0.002) * 0.1;
+
+            // C. Look at Mouse (Parallax)
+            caregiver.rotation.y = (mouseX * 0.0002); 
+            caregiver.rotation.x = (mouseY * 0.0002);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // 6. RESIZE HANDLER
+        camera.position.z = 7;
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Update Target based on screen size
+            if (window.innerWidth < 768) {
+                targetX = 0;
+            } else {
+                targetX = 2.5;
+            }
+        });
+
+    </script>
+</body>
+</html>

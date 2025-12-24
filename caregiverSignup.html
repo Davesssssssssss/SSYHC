@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Talent Signup UI</title>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: 'Inter', sans-serif; background: #fff; color: #1c1c1e;
+      min-height: 100vh; display: flex; justify-content: center; align-items: stretch;
+    }
+    .container { min-height: 100vh; width: 100%; display: flex; box-shadow: 0 0 12px rgba(255, 255, 255, 0.1); }
+
+    /* Left Panel */
+    .left-panel {
+      background-color: #ff9500; color: #fafafa; width: 320px; padding: 2.5rem 2rem 3rem;
+      display: flex; flex-direction: column; gap: 2.25rem;
+    }
+    .left-panel h2 { margin: 0; font-weight: 600; font-size: 1.5rem; }
+    .left-panel p.subtitle { margin: 0; font-style: italic; font-size: 0.875rem; opacity: 0.9; }
+    .left-panel p.description { font-size: 0.85rem; line-height: 1.4; margin: 0; }
+    .left-panel-steps { display: flex; flex-direction: column; gap: 2.5rem; margin-top: 1rem; }
+    .step { display: flex; align-items: center; gap: 1rem; opacity: 0.5; cursor: pointer; }
+    .step.active { font-weight: 600; opacity: 1; }
+    .step-circle {
+      width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255 255 255 / 0.5);
+      display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+    }
+    .step.active .step-circle { background: #60a5fa; border-color: #60a5fa; color: #fff; }
+
+    /* Right Panel */
+    .right-panel { flex-grow: 1; background: #f9fafb; padding: 3rem; display: flex; flex-direction: column; }
+    .header { font-size: 1.3rem; font-weight: 600; margin-bottom: 1.5rem; }
+
+    /* Form styling */
+    form { display: flex; flex-direction: column; gap: 1.5rem; }
+    label { font-weight: 500; font-size: 0.9rem; color: #374151; margin-bottom: 0.3rem; display: block; }
+    label.required::after { content: " *"; color: #ef4444; }
+    input, select {
+      width: 100%; padding: 0.7rem 1rem; border: 1.5px solid #d1d5db; border-radius: 0.5rem;
+      font-size: 1rem; background: #fff; transition: border 0.3s, box-shadow 0.3s;
+    }
+    input:focus, select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgb(37 99 235 / 0.3); outline: none; }
+
+    /* Two-column layout */
+    .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; max-width: 800px; }
+    .two-column .full-width { grid-column: span 2; }
+
+    /* Input with button inside */
+    .input-with-button {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-with-button input {
+      width: 100%;
+      padding-right: 6rem; /* space for button */
+    }
+    .input-with-button button {
+      position: absolute;
+      right: 0.5rem;
+      background: #2563eb;
+      border: none;
+      color: #fff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .input-with-button button:hover { background: #1e40af; }
+
+    /* Password toggle */
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 2.5rem;
+    }
+    .bg-success {
+    background-color: #28a745; /* green */
+    color: #fff;              /* white text */
+    padding: 2px 6px;         /* some spacing */
+    border-radius: 4px;       /* rounded edges */
+    display: none;    /* so background wraps text */
+  }
+    .password-wrapper .toggle-password {
+      position: absolute;
+      right: 0.8rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Phone wrapper */
+    .phone-input-wrapper {
+      display: flex; align-items: center; gap: 0.75rem;
+      border: 1.5px solid #d1d5db; border-radius: 0.5rem;
+      padding: 0.25rem 1rem; background: #fff;
+    }
+    .phone-input-wrapper input { border: none; flex-grow: 1; padding: 0.7rem 0; }
+    .phone-flag svg { width: 24px; height: 16px; }
+
+    /* Next button */
+    button.next-btn {
+      align-self: flex-end; background: #2563eb; color: #fff; font-weight: 600; padding: 0.65rem 2.2rem;
+      border: none; border-radius: 0.65rem; cursor: pointer; box-shadow: 0 4px 10px rgb(37 99 235 / 0.5);
+      margin-top: 1rem;
+    }
+    /* button.next-btn:hover { background: #1e40af; } */
+
+    .tab { display: none; }
+    .tab.active { display: block; }
+
+      .next-btn:disabled {
+    background-color: #ccc;   /* gray when disabled */
+    color: #666;
+    cursor: not-allowed;
+  }
+   .next-btn:hover:not(:disabled) {
+    background-color: #1e40af;; /* darker green */
+  }
+
+  .dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.dropdown button {
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-content label {
+  display: block;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.dropdown-content label:hover {
+  background: #f0f0f0;
+}
+
+ .shift-group {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .shift-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 16px;
+      color: black;
+      user-select: none;
+      gap: 8px;
+    }
+    .shift-label input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      border: 3px solid #d59f00; /* golden border */
+      border-radius: 4px;
+      appearance: none;
+      -webkit-appearance: none;
+      outline-offset: 2px;
+      cursor: pointer;
+      position: relative;
+      margin: 0;
+    }
+    .shift-label input[type="checkbox"]:checked {
+      background-color: #d59f00;
+    }
+    .shift-label input[type="checkbox"]:focus-visible {
+      outline: 2px solid #d59f00;
+      outline-offset: 2px;
+    }
+.shift-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.shift-label {
+  flex: 1 1 120px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.shift-monday { background-color: #f0f8ff; }
+.shift-tuesday { background-color: #e6ffe6; }
+.shift-wednesday { background-color: #fff5e6; }
+.shift-thursday { background-color: #f9e6ff; }
+.shift-friday { background-color: #e6f7ff; }
+.shift-saturday { background-color: #ffe6e6; }
+.shift-sunday { background-color: #f5f5f5; }
+
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Panel -->
+    <section class="left-panel">
+      <h2>SeniorHomecare</h2>
+      <p class="subtitle">(e.g., looking for job opportunities)</p>
+      <p class="description">Select this option if you're applying as an <em>individual</em> seeking job opportunities</p>
+      <nav class="left-panel-steps">
+        <div class="step active" onclick="showTab(0)"><div class="step-circle">1</div>Personal Details</div>
+        <div class="step" onclick="showTab(1)"><div class="step-circle">2</div>Schedule</div>
+        <div class="step" onclick="showTab(2)"><div class="step-circle">3</div>Upload Documents</div>
+      </nav>
+    </section>
+
+    <!-- Right Panel -->
+    <section class="right-panel">
+      <!-- Personal Details -->
+      <div class="tab active" id="tab-0">
+        <header class="header">Personal Details</header>
+        <form class="two-column">
+          <div>
+            <label for="fullname" class="required">Full Name</label>
+            <input type="text" id="fullname" name="fullname" required />
+          </div>
+
+          <div>
+            
+            <label for="email" class="required">Email Address</label>
+            <label id="email_text" class="info-label bg-success"></label>
+            <div class="input-with-button">
+              <input type="email" id="email" name="emails" required />
+                
+              <button type="button" onclick="verifyvalidEmail()">Verify</button>
+            </div>
+            
+          </div>
+
+          <div>
+            <label for="gender" class="required">Gender</label>
+            <select id="gender" name="gender" required>
+              <option value="" disabled selected>Select your gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              
+            </select>
+          </div>
+
+       <div class="form-group">
+  <!-- Main field label -->
+  <label for="zipcode" class="required">Zip Code</label>
+  
+  <!-- Secondary label (dynamic text) -->
+  <label id="address" class="info-label"></label>
+
+  <div class="input-with-button">
+    <input type="text" id="zipcode" name="zipcode" required />
+    <button type="button" id="verifyZip" onclick="verifyZicode()">Verify</button>
+  </div>
+</div>
+
+
+          <div>
+            <label for="jobposition" class="required">Job Position</label>
+            <select id="jobposition" name="jobposition" required>
+              <option value="" disabled selected>Select job position</option>
+              <option value="Senior Care">Senior Care</option>
+              <option value="Child Care">Child Care</option>
+              <option value="Pet Care">Pet Care</option>
+              <option value="HouseKeeping">HouseKeeping</option>
+              <option value="Tutoring">Tutoring</option>
+            </select>
+          </div>
+
+      <div>
+    <label for="phone">Phone Number</label>
+    <div class="phone-input-wrapper">
+        <div class="phone-flag">
+            <img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="USA Flag" width="24" height="16"/>
+        </div>
+        <span>+1</span>
+        <input type="tel" id="phone" name="phone" />
+    </div>
+</div>
+  <div>
+            <label for="password" class="required">Work experience</label>
+            <div class="password-wrapper">
+              <input type="text" id="workexp" required />
+             
+            </div>
+          </div>
+
+          <div>
+            <label for="confirm-password" class="required">Character reference</label>
+            <div class="password-wrapper">
+              <input type="text" id="reference" required />
+              
+            </div>
+          </div>
+
+  
+
+        
+
+          <div>
+            <label for="password" class="required">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="password" required />
+              <span class="toggle-password" onclick="togglePassword('password', this)">👁</span>
+            </div>
+          </div>
+
+          <div>
+            <label for="confirm-password" class="required">Confirm Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="confirm-password" required />
+              <span class="toggle-password" onclick="togglePassword('confirm-password', this)">👁</span>
+            </div>
+          </div>
+
+          <div class="full-width">
+            <button type="button" class="next-btn" onclick="showTab(1)" disabled>Next</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Schedule -->
+
+<div class="tab" id="tab-2">
+  <header class="header">Schedule</header>
+  <label class="required">Prefered Schedule</label>
+  <form>
+    <!-- Shift Type -->
+    <!-- <label for="shift-type" class="required">Shift Type</label>
+    <select id="shift-type" name="shift-type" required>
+      <option value="">-- Select Shift Type --</option>
+      <option value="Day">Day Shift</option>
+      <option value="night">Night Shift</option>
+      <option value="parttime">Part Time</option>
+    </select> -->
+ <div class="shift-group eye-container"  id="Prefered" aria-required="true">
+   
+    <label class="shift-label">
+      <input type="checkbox" id="dayid" value="Dayshift"/>
+      DAY SHIFT
+    </label>
+    <label class="shift-label">
+      <input type="checkbox" id="nightid" value="Nightshift"/>
+      NIGH SHIFT
+    </label>
+    <label class="shift-label">
+      <input type="checkbox" id="parttimeid" value="Parttime"/>
+      PART TIME
+    </label>
+  </div>
+    <!-- Available Schedule -->
+    <label class="required">Available Schedule</label>
+  <div class="shift-group">
+  <form id="Availability">
+    <div class="shift-labels">
+      <label class="shift-label shift-monday">
+        <input type="checkbox" class="checkbox-monday" id="mondayid" value="Monday"/> MONDAY
+      </label>
+      <label class="shift-label shift-tuesday">
+        <input type="checkbox" class="checkbox-tuesday" id="tuesdayid" value="Tuesday"/> TUESDAY
+      </label>
+      <label class="shift-label shift-wednesday">
+        <input type="checkbox" class="checkbox-wednesday" id="wedid" value="Wednesday"/> WEDNESDAY
+      </label>
+      <label class="shift-label shift-thursday">
+        <input type="checkbox" class="checkbox-thursday" id="thursid" value="Thursday"/> THURSDAY
+      </label>
+      <label class="shift-label shift-friday">
+        <input type="checkbox" class="checkbox-friday" id="friid" value="Friday"/> FRIDAY
+      </label>
+      <label class="shift-label shift-saturday">
+        <input type="checkbox" class="checkbox-saturday" id="satid" value="Saturday"/> SATURDAY
+      </label>
+      <label class="shift-label shift-sunday">
+        <input type="checkbox" class="checkbox-sunday"  id="sunid" value="Sunday"/> SUNDAY
+      </label>
+    </div>
+
+    <br /><br />
+<br>
+
+  </form>
+
+</div>
+      <button type="button" class="next-btn"  id="btn_schedule" onclick="showTab(2)" disabled >
+      Next
+    </button>
+    </form>
+  </div>  
+
+      <!-- Upload Documents -->
+      <div class="tab"  id="tab-1s">
+        <header class="header">Upload Documents</header>
+        <!-- <form id="uploadForm">
+          <label for="xray" class="required">Upload X-ray</label>
+          <input type="file" id="xray" accept="image/*,.pdf" required />
+          <label for="fingerprint" class="required">Upload Finger Print</label>
+          <input type="file" id="fingerprint" accept="image/*,.pdf" required />
+          <label for="validid" class="required">Upload Valid ID</label>
+          <input type="file" id="validid" accept="image/*,.pdf" required />
+          <label for="profileid" class="required">Upload Profile ID</label>
+          <input type="file" id="profileid" accept="image/*" required />
+          <button type="submit" class="next-btn">Submit</button>
+        </form> -->
+        <button type="button"  class="next-btn" onclick="savedToCMS()" style="margin-top: 300px;">Submit</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let useraddress = '';
+    let  usZipcode = '';
+    let flag = [];
+    let cemail = '';
+    let ct = '';
+    let PreferedSchd =  [];
+    let AvailableSched = [];
+    let  role = '';
+    function showTab(index) {
+      // document.querySelectorAll('.tab').forEach((tab, i) => {
+      //   tab.classList.toggle('active', i === index);
+      // });
+      // document.querySelectorAll('.step').forEach((step, i) => {
+      //   step.classList.toggle('active', i === index);
+      // });
+      ct = index;
+      control(index);
+    }
+
+    function togglePassword(fieldId, el) {
+      const input = document.getElementById(fieldId);
+      if (input.type === "password") {
+        input.type = "text";
+        el.textContent = "🙈";
+      } else {
+        input.type = "password";
+        el.textContent = "👁";
+      }
+    }
+    function control(index){
+            switch(index){
+              case 1: 
+             
+               personal_details()
+              break;
+              case 2:
+                schedule()
+                break;
+
+            }
+    }
+
+
+    function verifyvalidEmail(){
+   let mailInput = document.getElementById("email");
+let mail = mailInput.value;
+ if (mail != '') {
+  flag.push("1");  
+  
+  if (flag.length == 2) {
+     document.querySelector(".next-btn").removeAttribute("disabled");
+  }
+ }
+// apply green border
+mailInput.style.border = "2px solid #4af7ac";
+       let text_verifyemail = document.getElementById("email_text")
+
+
+
+    }
+    function verifyZicode(){
+let usaZip = document.getElementById("zipcode").value
+         const zips = document.getElementById("zipcode").value.trim();
+  
+  if (usaZip != '') {
+  flag.push("1");  
+  
+  if (flag.length == 2) {
+     document.querySelector(".next-btn").removeAttribute("disabled");
+  }
+ }
+        document.getElementById("zipcode").style.border = "2px solid #4af7ac";
+           if (!/^\d{5}$/.test(zips)) {
+       
+        alert("Please enter a valid 5-digit US ZIP code.")
+     
+      }
+
+      fetch(`https://api.zippopotam.us/us/${zips}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('ZIP code not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const place = data.places[0];
+       
+           useraddress =  place['place name']
+           usZipcode = usaZip;
+           let state  = place['state']
+
+
+         
+           
+         document.getElementById("address").innerHTML = useraddress + ", " + state;
+        
+          // window.parent.postMessage({ action: "SearchZipcode", data: {usZipcode} }, "*");
+        })
+        .catch(error => {
+         
+          console.log(error.message);
+          
+        });
+    }
+  
+    function personal_details(index) {
+  let fullname = document.getElementById("fullname").value.trim();
+   let workexp = document.getElementById("workexp").value.trim();
+      let reference = document.getElementById("reference").value.trim();
+  let gender = document.getElementById("gender").value.trim();
+  let jobposition = document.getElementById("jobposition").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  let password = document.getElementById("password").value.trim();
+  let confirmPassword = document.getElementById("confirm-password").value.trim();
+
+  // ✅ Validation helper
+  function setBorder(id, isValid) {
+    document.getElementById(id).style.border = isValid
+      ? "2px solid #4af7ac"   // green
+      : "2px solid #f74d5e";  // red
+    return isValid;
+  }
+
+  // ✅ Check all fields
+  let validFullname = setBorder("fullname", fullname !== "");
+  let validGender = setBorder("gender", gender !== "");
+  let validJob = setBorder("jobposition", jobposition !== "");
+  let validPhone = setBorder("phone", phone !== "");
+  let validPass = setBorder("password", password !== "");
+  let validWork = setBorder("workexp", workexp !== "");
+  let validreference = setBorder("reference", reference !== "");
+  let validConfirm = setBorder("confirm-password", confirmPassword !== "" && confirmPassword === password);
+
+  // ✅ Only go next if all are valid
+  let isValid = validFullname && validGender && validJob && validPhone && validPass && validConfirm && validWork &&
+  validreference;
+
+  if (isValid) {
+    // Move to next tab
+    document.querySelectorAll('.tab').forEach((tab, i) => {
+      tab.classList.toggle('active', i === ct);
+    });
+    document.querySelectorAll('.step').forEach((step, i) => {
+      step.classList.toggle('active', i === ct);
+    });
+  }
+}
+
+function schedule(){
+ 
+let ids = ["dayid", "nightid", "parttimeid"];
+let days = ["mondayid", "tuesdayid", "wedid", "thursid", "friid", "satid", "sunid"];
+
+
+
+  ids.forEach(id => {
+    let checkbox = document.getElementById(id);
+
+    if (checkbox.checked && !PreferedSchd.includes(checkbox.value)) {
+      PreferedSchd.push(checkbox.value);  // push the word, not the id
+    }
+
+    // optional: remove if unchecked
+    if (!checkbox.checked && PreferedSchd.includes(checkbox.value)) {
+      PreferedSchd = PreferedSchd.filter(item => item !== checkbox.value);
+    }
+  });
+
+   days.forEach(uid => {
+    let checkboxs = document.getElementById(uid);
+
+    if (checkboxs.checked && !AvailableSched.includes(checkboxs.value)) {
+     AvailableSched.push(checkboxs.value);  // push the word, not the id
+    }
+
+    // optional: remove if unchecked
+    if (!checkboxs.checked && AvailableSched.includes(checkboxs.value)) {
+      AvailableSched = AvailableSched.filter(item => item !== checkboxs.value);
+    }
+  });
+
+//  document.querySelectorAll('.tab').forEach((tab, x) => {
+//       tab.classList.toggle('active', x == 3);
+//     });
+//     document.querySelectorAll('.step').forEach((steps, x) => {
+//       steps.classList.toggle('active', x == 2);
+//     });
+window.parent.postMessage({ action: "showButton" }, "*");
+   document.querySelectorAll('.tab').forEach((tab, i) => {
+      tab.classList.toggle('active', i === ct);
+    });
+    document.querySelectorAll('.step').forEach((step, i) => {
+      step.classList.toggle('active', i === ct);
+    });
+     document.getElementById("tab-1").style.display = "block";
+    // document.getElementById("Prefered").style.display = "none"
+    // document.getElementById("Availability").style.display = "none"
+
+  console.log(PreferedSchd);
+   
+}
+
+let shifts = ["dayid", "nightid", "parttimeid"];
+let days = ["mondayid", "tuesdayid", "wedid", "thursid", "friid", "satid", "sunid"];
+
+function validateSelections() {
+  let shiftChecked = shifts.some(id => document.getElementById(id).checked);
+  let dayChecked = days.some(id => document.getElementById(id).checked);
+
+  if (shiftChecked && dayChecked) {
+    console.log("✅ Both shift and day are selected!");
+    // here you can auto-move to next tab or enable Next button
+     document.querySelector("#btn_schedule").removeAttribute("disabled");
+  } else if (!shiftChecked) {
+    console.log("❌ Please select at least one shift type.");
+  } else if (!dayChecked) {
+    console.log("❌ Please select at least one day.");
+  }
+}
+
+// add listener to all checkboxes
+[...shifts, ...days].forEach(id => {
+  document.getElementById(id).addEventListener("change", validateSelections);
+});
+
+  function savedToCMS(){
+     let items = [];
+        let fname = document.getElementById("fullname").value
+         let gender = document.getElementById("gender").value
+        let email = document.getElementById("email").value
+          let jobposition = document.getElementById("jobposition").value
+  let phone = document.getElementById("phone").value
+  let password = document.getElementById("password").value
+    let workexp = document.getElementById("workexp").value
+  let reference = document.getElementById("reference").value
+
+console.log(fname,gender,email,useraddress,usZipcode,jobposition,phone,password,PreferedSchd,AvailableSched);
+ items.push({fname,gender,email,useraddress,usZipcode,jobposition,phone,password,PreferedSchd,AvailableSched,workexp,reference});
+      window.parent.postMessage({ action: "create", data: {fname,gender,email,useraddress,usZipcode,jobposition,phone,password,PreferedSchd,AvailableSched,workexp,reference} }, "*");
+// formal-picture
+ showalert()
+  window.addEventListener("message", (event) => {
+      if (event.data.action === "doshowAlert") {
+         Swal.fire({
+        title: "Successfully!",
+        text: "You know Successfully registered!",
+        icon: "success",
+         confirmButtonText: "OK"
+      }).then((result) => {
+  if (result.isConfirmed) {
+     window.parent.postMessage({ action: "ToLogin", data: {role} }, "*");
+  }
+});
+
+      }
+    });
+
+
+  }
+   function  showalert(){
+     window.parent.postMessage({ action: "showalert", data: {role} }, "*");
+     
+  }
+  </script>
+</body>
+</html>

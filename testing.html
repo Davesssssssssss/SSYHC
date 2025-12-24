@@ -651,6 +651,53 @@
             background: #e0e0e0;
         }
         
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        
+        .pagination-btn {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pagination-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+        
+        .pagination-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-info {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin: 0 15px;
+        }
+        
         /* Responsive */
         @media (max-width: 1200px) {
             .stats-grid {
@@ -916,24 +963,6 @@
                         <div class="stat-label">Applied Jobs</div>
                     </div>
                     
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
-                            <span class="stat-trend trend-up" id="earningsTrend">+0%</span>
-                        </div>
-                        <div class="stat-value" id="monthlyEarnings">$0</div>
-                        <div class="stat-label">Estimated Earnings</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon"><i class="fas fa-star"></i></div>
-                            <span class="stat-trend trend-up" id="ratingTrend">+0%</span>
-                        </div>
-                        <div class="stat-value" id="averageRating">0.0</div>
-                        <div class="stat-label">Average Rating</div>
-                    </div>
-                    
                     <div class="stat-card" onclick="loadAvailableJobs()">
                         <div class="stat-header">
                             <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
@@ -962,7 +991,7 @@
                                         <tr>
                                             <th>Client</th>
                                             <th>Service</th>
-                                            <th>Schedule</th>
+                                            <th>Date Posted</th>
                                             <th>Pay Rate</th>
                                             <th>Actions</th>
                                         </tr>
@@ -971,6 +1000,16 @@
                                         <tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading jobs...</td></tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <!-- Pagination -->
+                            <div class="pagination" id="paginationControls" style="display: none;">
+                                <button class="pagination-btn" id="prevPage" onclick="changePage(currentPage - 1)" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span class="pagination-info" id="pageInfo">Page 1 of 1</span>
+                                <button class="pagination-btn" id="nextPage" onclick="changePage(currentPage + 1)" disabled>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
                             </div>
                         </div>
                         
@@ -1022,19 +1061,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- My Skills -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-award"></i> My Skills</h3>
-                            </div>
-                            <div class="skills-grid" id="skillsGrid">
-                                <div class="skill-tag" style="grid-column: 1 / -1; text-align: center; cursor: pointer;" onclick="updateProfile()">
-                                    <span>Add your skills</span>
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1051,6 +1077,11 @@
             mySkills: [],
             profileData: null
         };
+
+        // Pagination variables
+        let currentPage = 1;
+        const jobsPerPage = 5;
+        let filteredJobs = [];
 
         // Wix Message Handler
         window.addEventListener('message', async (event) => {
@@ -1223,31 +1254,15 @@
         function updateProfileUI() {
             if (!appState.profileData) return;
             
-            // Update skills display
-            const skillsGrid = document.getElementById('skillsGrid');
-            if (appState.profileData.skills && appState.profileData.skills.length > 0) {
-                skillsGrid.innerHTML = appState.profileData.skills.map(skill => `
-                    <div class="skill-tag">
-                        <span>${skill}</span>
-                        <i class="fas fa-check"></i>
-                    </div>
-                `).join('');
-                
-                // Add "Add More" button
-                skillsGrid.innerHTML += `
-                    <div class="skill-tag" style="grid-column: 1 / -1; text-align: center; cursor: pointer;" onclick="updateProfile()">
-                        <span>Add more skills</span>
-                        <i class="fas fa-plus"></i>
-                    </div>
-                `;
-            }
+            // Update skills display (removed as per requirements)
         }
 
-        // Render available jobs
+        // Render available jobs with pagination
         function renderAvailableJobs() {
-            const container = document.getElementById('availableJobsTable');
+            filteredJobs = [...appState.availableJobs];
             
-            if (appState.availableJobs.length === 0) {
+            if (filteredJobs.length === 0) {
+                const container = document.getElementById('availableJobsTable');
                 container.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px;">
@@ -1257,22 +1272,33 @@
                         </td>
                     </tr>
                 `;
+                document.getElementById('paginationControls').style.display = 'none';
                 return;
             }
             
-            // Sort jobs by creation date (newest first)
-            const sortedJobs = [...appState.availableJobs].sort((a, b) => 
-                new Date(b._createdDate || b.createdDate || 0) - new Date(a._createdDate || a.createdDate || 0)
-            );
+            // Reset to page 1
+            currentPage = 1;
+            renderPage();
+        }
+
+        function renderPage() {
+            const container = document.getElementById('availableJobsTable');
+            const paginationControls = document.getElementById('paginationControls');
             
-            container.innerHTML = sortedJobs.map(job => {
-                // Map CRG_INFO fields to display
-                const clientName = job.clientName || job.clientName || 'Client';
-                const serviceType = job.serviceType || job.careType || 'Senior Care';
-                const location = job.location || job.clientLocation || 'Location not specified';
-                const schedule = job.schedule || job.days || 'Flexible schedule';
+            // Calculate pagination
+            const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+            const startIndex = (currentPage - 1) * jobsPerPage;
+            const endIndex = startIndex + jobsPerPage;
+            const pageJobs = filteredJobs.slice(startIndex, endIndex);
+            
+            // Render the jobs for current page
+            container.innerHTML = pageJobs.map(job => {
+                const clientName = job.clientName || 'Client';
+                const serviceType = job.serviceType || 'Senior Care';
+                const location = job.location || 'Location not specified';
+                // Format the date using the new function
+                const datePosted = formatWixDate(job._createdDate || job.createdDate);
                 const payRate = job.clientRate || job.hourlyRate || '20';
-                const description = job.description || job.careNeeds || 'No description provided';
                 
                 return `
                     <tr>
@@ -1288,8 +1314,7 @@
                         <td>${serviceType}</td>
                         <td>
                             <div style="font-size: 0.85rem;">
-                                <div><strong>${schedule}</strong></div>
-                                <div style="color: var(--text-light);">${job.startTime || 'Flexible hours'}</div>
+                                <div><strong>${datePosted}</strong></div>
                             </div>
                         </td>
                         <td>
@@ -1317,8 +1342,50 @@
                 `;
             }).join('');
             
+            // Show/hide pagination
+            if (filteredJobs.length > jobsPerPage) {
+                paginationControls.style.display = 'flex';
+                updatePaginationControls(totalPages);
+            } else {
+                paginationControls.style.display = 'none';
+            }
+            
             // Update stats
-            document.getElementById('availableJobsCount').textContent = sortedJobs.length;
+            document.getElementById('availableJobsCount').textContent = filteredJobs.length;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+            
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            renderPage();
+        }
+
+        function updatePaginationControls(totalPages) {
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        // Date formatting function for Wix dates
+        function formatWixDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            try {
+                // Parse the Wix date string
+                const date = new Date(dateStr);
+                // Format as "Sun Dec 21 2025"
+                const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            } catch (e) {
+                return 'N/A';
+            }
         }
 
         // Render my applications
@@ -1386,9 +1453,9 @@
             
             // Map CRG_INFO fields
             const clientName = job.clientName || job.clientName || 'Client';
-            const serviceType = job.serviceType || job.careType || 'Senior Care';
+            const serviceType = job.serviceType || job.category || 'Senior Care';
             const location = job.location || job.clientLocation || 'Not specified';
-            const schedule = job.schedule || job.days || 'Flexible';
+            const schedule = job.schedule || job._createdDate || 'Flexible';
             const payRate = job.clientRate || job.pay_rate || '20';
             const description = job.description || job.careNeeds || 'No description provided';
             const requirements = job.requirements || job.skillsRequired || '';
@@ -1418,8 +1485,8 @@
                     <div class="job-detail-item">
                         <i class="fas fa-calendar"></i>
                         <div>
-                            <strong>Schedule</strong>
-                            <div>${schedule}</div>
+                            <strong>Date Posted</strong>
+                            <div>${formatWixDate(job._createdDate || job.createdDate)}</div>
                         </div>
                     </div>
                     <div class="job-detail-item">
@@ -1657,20 +1724,6 @@
             const availableCount = appState.availableJobs.length;
             document.getElementById('availableJobsCount').textContent = availableCount;
             
-            // Update earnings (estimated based on applications)
-            const estimatedEarnings = appState.myApplications.reduce((total, app) => {
-                const payRate = parseFloat(app.payRate) || 20;
-                const hours = 40; // Assuming 40 hours per job
-                return total + (payRate * hours);
-            }, 0);
-            document.getElementById('monthlyEarnings').textContent = `$${estimatedEarnings.toLocaleString()}`;
-            
-            // Update rating (simulated)
-            if (appState.myApplications.length > 0) {
-                document.getElementById('averageRating').textContent = '4.8';
-                document.getElementById('ratingTrend').textContent = '+5%';
-            }
-            
             // Update trends
             if (appliedCount > 0) {
                 document.getElementById('appliedTrend').textContent = '+12%';
@@ -1744,10 +1797,11 @@
             const searchInput = document.getElementById('jobSearch');
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
+                
                 if (searchTerm.trim() === '') {
-                    renderAvailableJobs();
+                    filteredJobs = [...appState.availableJobs];
                 } else {
-                    const filteredJobs = appState.availableJobs.filter(job => {
+                    filteredJobs = appState.availableJobs.filter(job => {
                         const clientName = (job.clientName || '').toLowerCase();
                         const serviceType = (job.serviceType || '').toLowerCase();
                         const location = (job.location || '').toLowerCase();
@@ -1758,70 +1812,11 @@
                                location.includes(searchTerm) ||
                                description.includes(searchTerm);
                     });
-                    
-                    const container = document.getElementById('availableJobsTable');
-                    if (filteredJobs.length === 0) {
-                        container.innerHTML = `
-                            <tr>
-                                <td colspan="5" style="text-align: center; padding: 40px;">
-                                    <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
-                                    <h4 style="color: var(--text-light); margin-bottom: 10px;">No jobs found</h4>
-                                    <p style="color: var(--text-light); font-size: 0.9rem;">No jobs match your search criteria</p>
-                                </td>
-                            </tr>
-                        `;
-                    } else {
-                        container.innerHTML = filteredJobs.map(job => {
-                            const clientName = job.clientName || 'Client';
-                            const serviceType = job.serviceType || 'Senior Care';
-                            const location = job.location || 'Location not specified';
-                            const schedule = job.schedule || 'Flexible schedule';
-                            const payRate = job.payRate || job.hourlyRate || '20';
-                            
-                            return `
-                                <tr>
-                                    <td>
-                                        <div class="job-client">
-                                            <div class="client-avatar">${getInitials(clientName)}</div>
-                                            <div class="client-info">
-                                                <h4>${clientName}</h4>
-                                                <p>${location}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>${serviceType}</td>
-                                    <td>
-                                        <div style="font-size: 0.85rem;">
-                                            <div><strong>${schedule}</strong></div>
-                                            <div style="color: var(--text-light);">${job.startTime || 'Flexible hours'}</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="job-pay-rate">
-                                            $${payRate}<span>/hr</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="job-actions">
-                                            <button class="btn-action btn-view" onclick="showJobDetails('${job._id}')">
-                                                <i class="fas fa-eye"></i> Details
-                                            </button>
-                                            ${!hasAppliedToJob(job._id) ? `
-                                            <button class="btn-action btn-apply" onclick="applyForJob('${job._id}')">
-                                                <i class="fas fa-paper-plane"></i> Apply
-                                            </button>
-                                            ` : `
-                                            <button class="btn-action" style="background: #6c757d; color: white;" disabled>
-                                                <i class="fas fa-check"></i> Applied
-                                            </button>
-                                            `}
-                                        </div>
-                                    </td>
-                                </tr>
-                            `;
-                        }).join('');
-                    }
                 }
+                
+                // Reset to page 1 when searching
+                currentPage = 1;
+                renderPage();
             });
         }
 
@@ -1835,7 +1830,7 @@
                     location: 'Brooklyn, NY',
                     serviceType: 'Companionship Care',
                     description: 'Looking for a compassionate caregiver to provide companionship and light housekeeping for an elderly lady.',
-                    schedule: 'Mon-Fri, 9 AM - 1 PM',
+                    _createdDate: 'Sun Dec 21 2025 22:53:24 GMT+0800 (Singapore Standard Time)',
                     startTime: '9:00 AM',
                     payRate: '25',
                     days: 'Monday to Friday',
@@ -1849,12 +1844,68 @@
                     location: 'Manhattan, NY',
                     serviceType: 'Personal Care Assistance',
                     description: 'Assistance with daily activities including bathing, dressing, and medication management.',
-                    schedule: 'Daily, 8 AM - 12 PM',
+                    _createdDate: 'Sat Dec 20 2025 15:30:12 GMT+0800 (Singapore Standard Time)',
                     startTime: '8:00 AM',
                     payRate: '28',
                     days: 'Everyday',
                     careNeeds: 'Personal care, medication management',
                     requirements: 'Personal Care Experience, Medication Management'
+                },
+                {
+                    _id: 'job3',
+                    clientid: 'client789',
+                    clientName: 'Alice Williams',
+                    location: 'Queens, NY',
+                    serviceType: 'Medication Management',
+                    description: 'Help with medication reminders and management for elderly patient.',
+                    _createdDate: 'Fri Dec 19 2025 10:15:45 GMT+0800 (Singapore Standard Time)',
+                    startTime: '10:00 AM',
+                    payRate: '22',
+                    days: 'Mon, Wed, Fri',
+                    careNeeds: 'Medication management',
+                    requirements: 'Medication Certification'
+                },
+                {
+                    _id: 'job4',
+                    clientid: 'client101',
+                    clientName: 'James Brown',
+                    location: 'Bronx, NY',
+                    serviceType: 'Mobility Assistance',
+                    description: 'Assistance with mobility and transportation to appointments.',
+                    _createdDate: 'Thu Dec 18 2025 14:20:30 GMT+0800 (Singapore Standard Time)',
+                    startTime: '2:00 PM',
+                    payRate: '26',
+                    days: 'Tuesday and Thursday',
+                    careNeeds: 'Mobility assistance',
+                    requirements: 'Mobility Aid Training'
+                },
+                {
+                    _id: 'job5',
+                    clientid: 'client112',
+                    clientName: 'Emma Davis',
+                    location: 'Staten Island, NY',
+                    serviceType: 'Dementia Care',
+                    description: 'Specialized care for patient with early-stage dementia.',
+                    _createdDate: 'Wed Dec 17 2025 09:45:22 GMT+0800 (Singapore Standard Time)',
+                    startTime: '11:00 AM',
+                    payRate: '30',
+                    days: 'Monday to Friday',
+                    careNeeds: 'Dementia care',
+                    requirements: 'Dementia Care Certification'
+                },
+                {
+                    _id: 'job6',
+                    clientid: 'client131',
+                    clientName: 'Michael Wilson',
+                    location: 'Long Island, NY',
+                    serviceType: 'Respite Care',
+                    description: 'Temporary relief care for primary caregiver.',
+                    _createdDate: 'Tue Dec 16 2025 18:10:15 GMT+0800 (Singapore Standard Time)',
+                    startTime: 'Flexible',
+                    payRate: '24',
+                    days: 'Weekends',
+                    careNeeds: 'General caregiving',
+                    requirements: 'CPR, First Aid'
                 }
             ];
         }
